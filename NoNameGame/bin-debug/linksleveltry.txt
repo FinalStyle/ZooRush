@@ -1,0 +1,4 @@
+redpanda=images/Pixel.png
+&song1=sounds/8BitWin!ByHeatleyBros.mp3
+&level=swfs/Duckltrylevel.swf
+&zooRushSimpleAssets=swfs/ZooRushSimpleAssets.swf
