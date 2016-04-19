@@ -28,6 +28,7 @@ package
 		
 		
 		public var allPlayers:Vector.<Hero> = new Vector.<Hero>;
+		public var nearestPlayersToTheStageEdge:Vector.<Hero> = new Vector.<Hero>;
 		
 		//////////////////////////////////////CameraSet////////////////////////////////////////////
 		public var midPointScreen:Point = new Point(0, 0);
@@ -35,7 +36,7 @@ package
 		public var playersGlobalPositions:Vector.<Point> = new Vector.<Point>;
 		public var playersLocalPositions:Vector.<Point> = new Vector.<Point>;
 		public var playersLastLocalsPositions:Vector.<Point> = new Vector.<Point>;
-		public static var canZoom:Boolean = true;
+		public var canZoom:Boolean = true;
 		public var cam:Camera;
 		public var sideLimitsX:Number=100;
 		///////////////////////////////////////////////////////////////////////////////////////////
@@ -43,9 +44,7 @@ package
 		public function Main()
 		{
 			Locator.assetsManager.loadLinks("linksleveltry.txt");
-			
 			Locator.assetsManager.addEventListener(Event.COMPLETE, evStartGame);
-			
 		}
 		public function evStartGame(event:Event):void
 		{
@@ -95,11 +94,10 @@ package
 		{
 		}
 		//////////////////////////////////////////////////////////////////////////////
-		//////////////////////Zoom////////////////////////////////////////////////////
+		/////////////////////////////////Zoom/////////////////////////////////////////
 		protected function zoomIn():void
 		{
 			cam.smoothZoom = cam.zoom * 1.05;
-			
 		}
 		
 		protected function zoomOut():void
@@ -107,11 +105,11 @@ package
 			cam.smoothZoom = cam.zoom / 1.1;
 		}		
 		///////////////////////////////////////////////////////////////////////////////
-		///////////////////////////////////Update//////////////////////////////////////
+		
 		///////////////////////////////////////////////////////////////////////////////
+		///////////////////////////////////Update//////////////////////////////////////
 		public function update(e:Event):void
 		{	
-			
 			cam.lookAt(camLookAt)
 			///////////////////////actualizo posiciones guardadas///////////////
 			checkCamera();
@@ -121,8 +119,8 @@ package
 			}			
 			updatePlayerGlobalPosition();
 			///////////////////////////////////////////////////////////////////
-			checkColitions(player);
-			checkColitions(player2);
+			checkHeroColitions(player);
+			checkHeroColitions(player2);
 			granadeCollitions();
 			///////////////////////////////////////////////////////////////////
 			if(cam.zoom>=1.4 || cam.zoom<=0.2)
@@ -131,9 +129,9 @@ package
 			}
 		}
 		///////////////////////////////////////////////////////////////////////////////
+		
 		///////////////////////////////////////////////////////////////////////////////
-		
-		
+		//////////////////////////////////Camera Set Funcitons/////////////////////////
 		public function getPlayerPositionFromLocalToGlobal(player:Hero):void
 		{
 			var pLocal:Point = new Point(0, 0);
@@ -219,7 +217,7 @@ package
 		/////////////////////////////////////////////////////////////////////////////////////////////////
 		///////////////////////////////////////Colitions Checking////////////////////////////////////////
 		/////////////////////////////////////////////////////////////////////////////////////////////////
-		public function checkColitions(player:Hero):void
+		public function checkHeroColitions(player:Hero):void
 		{
 			if(player.model.MC_botHitBox.hitTestObject(level.mc_floor))
 			{
@@ -256,16 +254,16 @@ package
 						if(allPlayers[j].granades[i].model.MC_botHitBox.hitTestObject(allPlatformsOfLevel1[k]) && allPlayers[j].granades[i].fallSpeed>0)
 						{
 							allPlayers[j].granades[i].model.y=allPlatformsOfLevel1[k].y-allPlatformsOfLevel1[k].height;
-							allPlayers[j].granades[i].fallSpeed=allPlayers[j].granades[i].fallSpeed/-8;
-							allPlayers[j].granades[i].speed=allPlayers[j].granades[i].speed/1.1;
+							allPlayers[j].granades[i].fallSpeed=allPlayers[j].granades[i].fallSpeed/-5;
+							allPlayers[j].granades[i].speed=allPlayers[j].granades[i].speed/1.2;
 							
 						}						
 					}
 					if(allPlayers[j].granades[i].model.hitTestObject(level.mc_floor) && allPlayers[j].granades[i].fallSpeed>0)
 					{
 						allPlayers[j].granades[i].model.y=level.mc_floor.y-level.mc_floor.height;
-						allPlayers[j].granades[i].fallSpeed=allPlayers[j].granades[i].fallSpeed/-8;
-						allPlayers[j].granades[i].speed=allPlayers[j].granades[i].speed/1.1;
+						allPlayers[j].granades[i].fallSpeed=allPlayers[j].granades[i].fallSpeed/-5;
+						allPlayers[j].granades[i].speed=allPlayers[j].granades[i].speed/1.2;
 					}
 				}
 			}
