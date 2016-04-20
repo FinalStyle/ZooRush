@@ -1,4 +1,0 @@
-redpanda=images/Pixel.png
-&song1=sounds/8BitWin!ByHeatleyBros.mp3
-&LvL1Assets=swfs/LvL1Assets.swf
-&menucabeza=swfs/MenuCabeza.swf
