@@ -218,6 +218,7 @@ package
 			///////////////////////////////////////////////////////////////////
 			checkColitions(player);
 			checkColitions(player2);
+			if(cam.zoom>=1.2 || cam.zoom<=0.2)
 			{
 				canZoom=false
 			}
