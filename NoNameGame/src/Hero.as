@@ -9,13 +9,14 @@ package
 	
 	public class Hero
 	{
-		public var hp:int = 10;
+		public var hp:int = 100;
 		public var model:MovieClip;
 		public var speed:int = 5;
 		
 		public var fallSpeed:int = 1;
 		public var grav:int = 1;
 		
+		/** Necesito el nivel en el que estoy */ 
 		public var currentlvl:MovieClip;
 		//////////Teclas/////////
 		public var up:Boolean;
@@ -32,14 +33,18 @@ package
 		public var shootKey:int;
 		public var atk1Key:int;
 		/////////////////////////
+		/** Variable para controlar si puede moverse o no */
 		public var canmove:Boolean = true;
+		/** Variable para controlar si puede saltar o no */
 		public var canJump:Boolean = true;
-		///////////////////////////Balas/////////////////////////////
+		///////////////////////////Armas y ataques/////////////////////////////
 		public var bullet:Vector.<MovieClip> = new Vector.<MovieClip>();
 		public var granades:Vector.<Granade> = new Vector.<Granade>();
-		
+		/** pointingArrow es una flecha que apunta hacia donde se lanza la granada */ 
 		public var pointingArrow:pointArrow;
+		/** Holding se utiliza para que la funcion del eventlistener de teclado no se repita cuando se mantiene apretado */
 		public var holding:Boolean=false;
+		///////////////////////////////////////////////////////////////////////
 		
 		public function Hero(up:int, down:int, right:int, left:int, shoot:int, atk1:int)
 		{

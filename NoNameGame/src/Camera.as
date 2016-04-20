@@ -13,6 +13,7 @@ package
 		public var delayZoom:Number = 20;
 		
 		
+		
 		public function Camera()
 		{
 			view = new Sprite();
