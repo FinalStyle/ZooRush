@@ -16,7 +16,7 @@ package
 		
 		//*******************************Misil************************************//
 		public var missileModel:MovieClip;
-		public var speed:Number = 5;
+		public var speed:Number = 15;
 		public var shot:Boolean=false;
 		public var missileRadians:Number;
 		//***********************************************************************//
@@ -27,6 +27,7 @@ package
 		public var timeToReload:int = 1000;
 		public var currentTimeToReload:Number = timeToShoot;
 		
+		public var currentlvl:MovieClip;
 		
 		public function Cannon()
 		{
@@ -41,8 +42,9 @@ package
 			model.x=posX;
 			model.y=posY;
 			missileModel.scaleX = missileModel.scaleY= 0.5;
-			missileModel.x=model.x
-			missileModel.y=model.y
+			missileModel.x=model.x;
+			missileModel.y=model.y;
+			currentlvl=parent;
 			
 		}
 		public function update(target:Point):void
@@ -86,17 +88,21 @@ package
 				{
 					model.mc_barrel.rotation += 3;
 				}
-				
 				missileModel.x+=direction.x*speed;
 				missileModel.y+=direction.y*speed;
-				currentTimeToReload-=1000/60;
-				if(currentTimeToReload<=0)
-				{
-					shot=false;	
-					currentTimeToReload=timeToReload
-				}
 			}
 			
+		}
+		public function destroyMissile():void
+		{
+			currentlvl.removeChild(missileModel);
+			currentlvl.removeChild(model);
+			missileModel.x=model.x;
+			missileModel.y=model.y;
+			
+			currentlvl.addChild(missileModel);
+			missileModel.rotation=model.mc_barrel.rotation;
+			currentlvl.addChild(model);
 		}
 		
 	}

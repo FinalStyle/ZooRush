@@ -25,7 +25,7 @@ package
 		public var level:MovieClip;
 		public var camLookAt:MovieClip;
 		
-		
+		public var gameEnded:Boolean = false;
 		
 		public var allPlatformsOfLevel1:Array;
 		public var allWallsOfLevel1:Array;
@@ -159,8 +159,8 @@ package
 			
 			
 			
-			player.spawn(200, this.level);
-			player2.spawn(Locator.mainStage.stageWidth-200, this.level);
+			player.spawn(150, this.level);
+			player2.spawn(Locator.mainStage.stageWidth-150, this.level);
 			
 			mid2Players.x = (player.model.x + player2.model.x)/2
 			mid2Players.y = (player.model.y + player2.model.y)/2
@@ -194,7 +194,6 @@ package
 		protected function zoomIn():void
 		{
 			cam.smoothZoom = cam.zoom * 1.05;
-			
 		}
 		
 		protected function zoomOut():void
@@ -204,34 +203,40 @@ package
 		///////////////////////////////////////////////////////////////////////////////
 		public function update(e:Event):void
 		{	
-			granadeCollitions()
+			
 			
 			for (var i:int = 0; i < allPlayers.length; i++) 
 			{
 				allPlayers[i].Update();
 			}
-			
 			cam.lookAt(camLookAt)
-			/////////////////actualizo posiciones guardadas////////////////////
-			checkCamera();
-			updatePlayerGlobalPosition();
-			///////////////////////////////////////////////////////////////////
-			checkColitions(player);
-			checkColitions(player2);
-			if(cam.zoom>=1.2 || cam.zoom<=0.2)
+			if(!gameEnded)
 			{
-				canZoom=false
+				
+				/////////////////actualizo posiciones guardadas////////////////////
+				checkCamera();
+				updatePlayerGlobalPosition();
+				///////////////////////////Collitions//////////////////////////////
+				granadeCollitions()
+				missileCollitions();
+				if(cam.zoom>=1.2 || cam.zoom<=0.2)
+				{
+					canZoom=false
+				}
+				
 			}
-			
-			/*for (var j:int = 0; j < allCannons.length; j++) 
-			{
-				allCannons[j].update(playersLocalPositions[j]);
-			}	*/	
+			//*****checkPlayersColitions esta fuera del if porque necesito seguir comprobando colisiones del jugador que gana*****//
 			for (var j:int = 0; j < allCannons.length; j++) 
 			{
 				allCannons[j].update(GetNearestPlayerToCannon(allCannons[j].model));
 			}
-			
+			checkPlayersColitions();
+			checkDeaths();
+			if(allPlayers.length==1)
+			{
+				
+				cam.lookAt(allPlayers[0].model)
+			}
 		}
 		
 		public function GetNearestPlayerToCannon(cannon:MovieClip):Point 
@@ -266,7 +271,7 @@ package
 			if(pLocal.x - nearestLeftPosition.x < nearestRightPosition.x - pLocal.x)
 			{
 				//trace("resta1")
-
+				
 				nearestPlayerPosition = nearestLeftPosition
 			}
 			if(pLocal.x - nearestLeftPosition.x > nearestRightPosition.x - pLocal.x)
@@ -363,31 +368,46 @@ package
 		
 		//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		//****************************************** Colition Checks ***********************************************************//
-		public function checkColitions(player:Hero):void
+		
+		public function checkDeaths():void
 		{
-			if(player.model.MC_botHitBox.hitTestObject(level.mc_floor))
+			for (var k:int =  allPlayers.length-1; k > 0; k--) 
 			{
-				player.fallSpeed=0;
-				player.model.y=level.mc_floor.y-level.mc_floor.height;
-				player.canJump=true;
-			}
-			for (var i:int = 0; i < allPlatformsOfLevel1.length; i++) 
-			{
-				if(player.model.MC_botHitBox.hitTestObject(allPlatformsOfLevel1[i]))
+				for (var i:int = 0; i < allCannons.length; i++) 
 				{
-					player.fallSpeed=0;
-					player.model.y=allPlatformsOfLevel1[i].y-allPlatformsOfLevel1[i].height;
-					player.canJump=true;
-				}				
-			}
-			for (var j:int = 0; j < allWallsOfLevel1.length; j++) 
-			{
-				if(player.model.MC_sideHitBox.hitTestObject(allWallsOfLevel1[j]))
-				{
-					player.canmove=false;
-					
+					if(allPlayers[k].model.MC_botHitBox.hitTestObject(allCannons[i].missileModel))
+					{
+						gameEnded=true;
+						allPlayers[k].destroy();
+						allPlayers.splice(k, 1);
+					}
 				}
 			}
+		}
+		public function checkPlayersColitions():void
+		{
+			for (var k:int =  allPlayers.length-1; k >= 0; k--) 
+			{
+				for (var i:int = 0; i < allPlatformsOfLevel1.length; i++) 
+				{
+					if(allPlayers[k].model.MC_botHitBox.hitTestObject(allPlatformsOfLevel1[i]))
+					{
+						allPlayers[k].fallSpeed=0;
+						allPlayers[k].model.y=allPlatformsOfLevel1[i].y-allPlatformsOfLevel1[i].height;
+						allPlayers[k].canJump=true;
+					}				
+				}
+				for (var j:int = 0; j < allWallsOfLevel1.length; j++) 
+				{
+					if(allPlayers[k].model.MC_sideHitBox.hitTestObject(allWallsOfLevel1[j]))
+					{
+						allPlayers[k].canmove=false;
+						
+					}
+				}
+				
+			}
+			
 		}
 		public function allPlatformsToArrayLevel1():void
 		{
@@ -432,6 +452,21 @@ package
 					}
 				}
 			}
+		}
+		public function missileCollitions():void
+		{
+			for (var i:int = 0; i < allCannons.length; i++) 
+			{
+				for (var k:int = 0; k < allPlatformsOfLevel1.length; k++) 
+				{
+					if(allCannons[i].missileModel.hitTestObject(allPlatformsOfLevel1[k]))
+					{
+						allCannons[i].destroyMissile();
+						allCannons[i].shot=false;
+					} 
+				}
+			}
+			
 		}
 		//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	}
