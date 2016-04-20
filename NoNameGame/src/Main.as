@@ -15,6 +15,8 @@ package
 	import flash.ui.Keyboard;
 	import flash.ui.Mouse;
 	
+	import flashx.textLayout.operations.MoveChildrenOperation;
+	
 	[SWF(height="720", width="1280", frameRate="60")]
 	public class Main extends Locator
 	{		
@@ -30,6 +32,7 @@ package
 		
 		public var allPlayers:Vector.<Hero>;
 		
+		
 		//////////////////////////////////////CameraSet////////////////////////////////////////////
 		public var midPointScreen:Point;
 		public var mid2Players:Point;
@@ -39,11 +42,15 @@ package
 		public var canZoom:Boolean;
 		public var cam:Camera;
 		public var sideLimitsX:Number;
+		/////////////////////////////////////////Menu//////////////////////////////////////////////////
 		public var w:Boolean;
 		public var s:Boolean;
 		public var menu1:MovieClip;
 		public var menu2:MovieClip;
-		///////////////////////////////////////////////////////////////////////////////////////////
+		//////////////////////////////////////////Cannon///////////////////////////////////////////////
+		public var cannon1:Cannon;
+		public var cannon2:Cannon;
+		public var allCannons:Vector.<Cannon>;
 		
 		public function Main()
 		{
@@ -55,7 +62,6 @@ package
 		
 		public function evMainMenu(event:Event):void
 		{
-			
 			menu1=Locator.assetsManager.getMovieClip("MC_Menu1");
 			menu2=Locator.assetsManager.getMovieClip("MC_Menu2");
 			Locator.mainStage.addChild(menu1)
@@ -163,6 +169,17 @@ package
 			getPlayerPositionFromLocalToGlobal(player);
 			getPlayerPositionFromLocalToGlobal(player2);
 			
+			
+			//*********************************Cannon Set*******************************//
+			allCannons= new Vector.<Cannon>;
+			cannon1 = new Cannon;
+			cannon2 = new Cannon;
+			cannon1.spawn(2*stage.stageWidth/5, 0, this.level);
+			cannon2.spawn(4*stage.stageWidth/5, 0, this.level);
+			
+			allCannons.push(cannon1);
+			allCannons.push(cannon2);
+			
 			Locator.mainStage.addEventListener(Event.ENTER_FRAME, update)
 			Locator.mainStage.addEventListener(MouseEvent.CLICK, offCamera);
 			
@@ -170,6 +187,7 @@ package
 		
 		protected function offCamera(event:MouseEvent):void
 		{
+			zoomOut();
 		}
 		//////////////////////////////////////////////////////////////////////////////
 		//////////////////////////////////Zoom////////////////////////////////////////
@@ -200,12 +218,64 @@ package
 			///////////////////////////////////////////////////////////////////
 			checkColitions(player);
 			checkColitions(player2);
-			if(cam.zoom>=1.4 || cam.zoom<=0.2)
 			{
 				canZoom=false
 			}
-			trace(cam.zoom);
 			
+			/*for (var j:int = 0; j < allCannons.length; j++) 
+			{
+				allCannons[j].update(playersLocalPositions[j]);
+			}	*/	
+			for (var j:int = 0; j < allCannons.length; j++) 
+			{
+				allCannons[j].update(GetNearestPlayerToCannon(allCannons[j].model));
+			}
+			
+		}
+		
+		public function GetNearestPlayerToCannon(cannon:MovieClip):Point 
+		{
+			
+			var pLocal:Point = new Point(0, 0);
+			var pGlobal:Point;
+			pLocal= new Point(cannon.x, cannon.y);
+			pGlobal = cannon.parent.localToGlobal(pLocal);
+			var nearestLeftPosition:Point = new Point(-10000);
+			var nearestRightPosition:Point = new Point (10000);
+			var nearestPlayerPosition:Point = new Point;
+			
+			
+			//trace("Cannon Pos X", pGlobal.x, "Cannon Pos Y", pGlobal.y)
+			for (var j:int = 0; j < playersLocalPositions.length; j++) 
+			{
+				if(playersLocalPositions[j].x<=pLocal.x && playersLocalPositions[j].x>nearestLeftPosition.x)
+				{
+					nearestLeftPosition.x=playersLocalPositions[j].x;
+					nearestLeftPosition.y=playersLocalPositions[j].y;
+				}
+				if(playersLocalPositions[j].x>=pLocal.x && playersLocalPositions[j].x<nearestRightPosition.x)
+				{
+					nearestRightPosition.x=playersLocalPositions[j].x;
+					nearestRightPosition.y=playersLocalPositions[j].y;
+				}
+				//trace("NLP Pos X", nearestLeftPosition.x, "NLP Pos Y", nearestLeftPosition.y)
+				//trace("Despues NRP Pos X", nearestRightPosition.x, "NRP Pos Y", nearestRightPosition.y)
+			}
+			
+			if(pLocal.x - nearestLeftPosition.x < nearestRightPosition.x - pLocal.x)
+			{
+				//trace("resta1")
+
+				nearestPlayerPosition = nearestLeftPosition
+			}
+			if(pLocal.x - nearestLeftPosition.x > nearestRightPosition.x - pLocal.x)
+			{
+				//trace("resta2")
+				nearestPlayerPosition = nearestRightPosition
+			}
+			
+			//trace("NPS Pos X", nearestPlayerPosition.x, "NPS Pos Y", nearestPlayerPosition.y)
+			return nearestPlayerPosition;
 			
 		}
 		public function getPlayerPositionFromLocalToGlobal(player:Hero):void
