@@ -19,6 +19,15 @@ package Engine
 			keyopen=Keyboard.F8;
 			Locator.mainStage.addEventListener(KeyboardEvent.KEY_UP, ev_keyup);
 			
+			registerCommand("cls", clear, "Esto limpia la pantalla.", 1);
+			registerCommand("exit", exit, "Esto sale del juego.", 0);
+			registerCommand("help", help, "Esto muestra lo que estás viendo ahora al tipear esto.",0);
+			/*Locator.console.registerCommand("granade_speed",ChangeGranadeSpeed, "esto acelera o desacelera la granada",1)*/
+			
+		}
+		public function ChangeGranadeSpeed(vel:int):void
+		{
+			
 			
 		}
 		
@@ -47,6 +56,7 @@ package Engine
 			allCommands[name] = cData;
 			
 		}
+	   
 		
 		public function unregisterCommand(name:String):void
 		{
@@ -61,7 +71,7 @@ package Engine
 		{
 			write(text + "\n");
 		}
-		
+	
 		public function open():void
 		{
 			
@@ -78,7 +88,26 @@ package Engine
 			Locator.mainStage.focus=Locator.mainStage;
 			
 		}
+		public function clear():void
+		{
+			model.tb_log.text = "";
+		}
 		
+		public function exit():void
+		{
+			
+		}
+		
+		public function help():void
+		{
+			writeLn("Lista de ayuda: ");
+			writeLn("");
+			for(var varName:String in allCommands)
+			{
+				//trace(varName, allCommands[varName]);
+				writeLn(varName + " : " + allCommands[varName].description);
+			}
+		}
 		public function execComand(): void
 		{
 			var textParsed:Array=model.Texto1.text.split(" ");

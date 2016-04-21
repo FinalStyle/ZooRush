@@ -11,7 +11,7 @@ package
 	{
 		public var hp:int = 100;
 		public var model:MovieClip;
-		public var speed:int = 5;
+		public var speed:int = 12;
 		
 		public var fallSpeed:int = 1;
 		public var grav:int = 1;
@@ -25,6 +25,7 @@ package
 		public var right:Boolean;
 		public var space:Boolean;
 		public var atk1:Boolean;
+		public var moviendoce:Boolean;
 		/////////////////////////
 		public var upKey:int;
 		public var downKey:int;
@@ -37,6 +38,7 @@ package
 		public var canmove:Boolean = true;
 		/** Variable para controlar si puede saltar o no */
 		public var canJump:Boolean = true;
+		public var JumpContador:int=0
 		///////////////////////////Armas y ataques/////////////////////////////
 		public var bullet:Vector.<MovieClip> = new Vector.<MovieClip>();
 		public var granades:Vector.<Granade> = new Vector.<Granade>();
@@ -44,6 +46,8 @@ package
 		public var pointingArrow:pointArrow;
 		/** Holding se utiliza para que la funcion del eventlistener de teclado no se repita cuando se mantiene apretado */
 		public var holding:Boolean=false;
+		public var segundero:int=2;
+		public var framecontador:int=60;
 		///////////////////////////////////////////////////////////////////////
 		
 		public function Hero(up:int, down:int, right:int, left:int, shoot:int, atk1:int)
@@ -60,6 +64,12 @@ package
 		}
 		public function Update():void
 		{
+			
+		
+			
+				framecontador++
+		
+			
 			checkKeys();
 			fall();
 			moveBullets();
@@ -107,13 +117,22 @@ package
 			model.x=PosX;
 			model.y=Locator.mainStage.stageHeight/2;
 			currentlvl = parent;
-			
+			model.MC_sideHitBox.alpha=0;
+			model.MC_botHitBox.alpha=0;
+			model.MC_HitBox.alpha=0;
+			model.MC_topHitBox.alpha=0;
 		}
 		public function move(direction:int):void
 		{
 			if(canmove)
 			{
+				if(!moviendoce)
+				{
+					model.MC_model.gotoAndPlay("Run");
+				}
 				model.x+=speed*direction;
+				moviendoce=true;
+			
 			}
 				model.scaleX=1*direction;
 				canmove=true;
@@ -167,13 +186,19 @@ package
 		
 		public function checkKeys():void
 		{
-			if (up && canJump) 
+			if (up && canJump&&JumpContador<2&&fallSpeed>-8) 
 			{
+				
 				fallSpeed=-15;
 				canJump = false;
+				JumpContador++
+					
 			}
-			if (down) 
+			if (down&&canmove) 
 			{
+				
+					framecontador=0;
+				      
 				
 			}
 			if (left) 
@@ -232,6 +257,7 @@ package
 				case upKey:
 				{
 					up=false;
+					canJump=true;
 					break;
 				}
 				case downKey:
@@ -242,11 +268,17 @@ package
 				case leftKey:
 				{
 					left=false;
+				
+					moviendoce=false;
+						model.MC_model.gotoAndPlay("Idle");
+					
 					break;
 				}
 				case rightKey:
 				{
 					right=false;
+					moviendoce=false;
+					model.MC_model.gotoAndPlay("Idle");
 					break;
 				}
 				case atk1Key:

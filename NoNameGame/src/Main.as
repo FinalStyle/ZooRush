@@ -52,13 +52,14 @@ package
 		public var cannon2:Cannon;
 		public var allCannons:Vector.<Cannon>;
 		
+		
+		
 		public function Main()
 		{
 			Locator.assetsManager.loadLinks("linksleveltry.txt");
 			Locator.assetsManager.addEventListener(Event.COMPLETE, evMainMenu);
 			
 		}
-		
 		
 		public function evMainMenu(event:Event):void
 		{
@@ -69,7 +70,7 @@ package
 			Locator.mainStage.addEventListener(KeyboardEvent.KEY_UP, keyUp)
 		}
 		
-		
+	
 		
 		protected function keyUp(e:KeyboardEvent):void
 		{
@@ -159,8 +160,8 @@ package
 			
 			
 			
-			player.spawn(150, this.level);
-			player2.spawn(Locator.mainStage.stageWidth-150, this.level);
+			player.spawn(this.level.MC_spawn.x, this.level);
+			player2.spawn(this.level.MC_spawn2.x, this.level);
 			
 			mid2Players.x = (player.model.x + player2.model.x)/2
 			mid2Players.y = (player.model.y + player2.model.y)/2
@@ -238,6 +239,9 @@ package
 				cam.lookAt(allPlayers[0].model)
 			}
 		}
+		
+		
+		
 		
 		public function GetNearestPlayerToCannon(cannon:MovieClip):Point 
 		{
@@ -390,11 +394,12 @@ package
 			{
 				for (var i:int = 0; i < allPlatformsOfLevel1.length; i++) 
 				{
-					if(allPlayers[k].model.MC_botHitBox.hitTestObject(allPlatformsOfLevel1[i]))
+					if(allPlayers[k].model.MC_botHitBox.hitTestObject(allPlatformsOfLevel1[i])&&allPlayers[k].framecontador>=6)
 					{
 						allPlayers[k].fallSpeed=0;
 						allPlayers[k].model.y=allPlatformsOfLevel1[i].y-allPlatformsOfLevel1[i].height;
 						allPlayers[k].canJump=true;
+						allPlayers[k].JumpContador=0;
 					}				
 				}
 				for (var j:int = 0; j < allWallsOfLevel1.length; j++) 
@@ -416,6 +421,8 @@ package
 				if(level.getChildAt(i).name=="mc_platform")
 				{
 					allPlatformsOfLevel1.push(level.getChildAt(i));
+					level.getChildAt(i).alpha=0;
+					
 				}
 			}
 		}
@@ -426,6 +433,7 @@ package
 				if(level.getChildAt(i).name=="mc_wall")
 				{
 					allWallsOfLevel1.push(level.getChildAt(i));
+					level.getChildAt(i).alpha=0;
 				}
 			}
 		}	
