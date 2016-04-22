@@ -15,6 +15,7 @@ package
 	import flash.ui.Keyboard;
 	import flash.ui.Mouse;
 	
+	import flashx.textLayout.formats.BackgroundColor;
 	import flashx.textLayout.operations.MoveChildrenOperation;
 	
 	[SWF(height="720", width="1280", frameRate="60")]
@@ -160,8 +161,9 @@ package
 			
 			
 			
-			player.spawn(this.level.MC_spawn.x, this.level);
-			player2.spawn(this.level.MC_spawn2.x, this.level);
+			player.spawn(this.level.MC_spawn.x, this.level.MC_spawn.y, this.level);
+			player2.spawn(this.level.MC_spawn2.x, this.level.MC_spawn2.y, this.level);
+			player2.model.scaleX*=-1
 			
 			mid2Players.x = (player.model.x + player2.model.x)/2
 			mid2Players.y = (player.model.y + player2.model.y)/2
@@ -194,12 +196,12 @@ package
 		//////////////////////////////////Zoom////////////////////////////////////////
 		protected function zoomIn():void
 		{
-			cam.smoothZoom = cam.zoom * 1.05;
+			cam.smoothZoom = cam.zoom * 1.1;
 		}
 		
 		protected function zoomOut():void
 		{
-			cam.smoothZoom = cam.zoom / 1.1;
+			cam.smoothZoom = cam.zoom / 1.3;
 		}		
 		///////////////////////////////////////////////////////////////////////////////
 		public function update(e:Event):void
@@ -227,16 +229,37 @@ package
 				
 			}
 			//*****checkPlayersColitions esta fuera del if porque necesito seguir comprobando colisiones del jugador que gana*****//
-			for (var j:int = 0; j < allCannons.length; j++) 
-			{
-				allCannons[j].update(GetNearestPlayerToCannon(allCannons[j].model));
-			}
 			checkPlayersColitions();
-			checkDeaths();
+
 			if(allPlayers.length==1)
 			{
-				
-				cam.lookAt(allPlayers[0].model)
+				gameEnded=true;
+				if(camLookAt.x>allPlayers[0].model.x+5)
+				{
+					camLookAt.x-=3;
+					zoomIn();
+				}
+				else if(camLookAt.x<allPlayers[0].model.x-5)
+				{
+					camLookAt.x+=3;
+					zoomIn();
+				}
+				if(camLookAt.y>allPlayers[0].model.y+5)
+				{
+					camLookAt.y-=3;
+				}
+				else if(camLookAt.y<allPlayers[0].model.y-5)
+				{
+					camLookAt.y+=3;
+				}
+			}
+			else
+			{
+				for (var j:int = 0; j < allCannons.length; j++) 
+				{
+					allCannons[j].update(GetNearestPlayerToCannon(allCannons[j].model));
+				}
+				checkDeaths();
 			}
 		}
 		
@@ -375,15 +398,15 @@ package
 		
 		public function checkDeaths():void
 		{
-			for (var k:int =  allPlayers.length-1; k > 0; k--) 
+			for (var k:int = allPlayers.length-1; k >= 0; k--) 
 			{
 				for (var i:int = 0; i < allCannons.length; i++) 
 				{
 					if(allPlayers[k].model.MC_botHitBox.hitTestObject(allCannons[i].missileModel))
 					{
-						gameEnded=true;
 						allPlayers[k].destroy();
 						allPlayers.splice(k, 1);
+						trace("Dead")
 					}
 				}
 			}
@@ -398,7 +421,6 @@ package
 					{
 						allPlayers[k].fallSpeed=0;
 						allPlayers[k].model.y=allPlatformsOfLevel1[i].y-allPlatformsOfLevel1[i].height;
-						allPlayers[k].canJump=true;
 						allPlayers[k].JumpContador=0;
 					}				
 				}
@@ -439,19 +461,45 @@ package
 		}	
 		public function granadeCollitions():void
 		{
+			var k:int;
 			for (var j:int = 0; j < allPlayers.length; j++) 
 			{
 				for (var i:int = 0; i < allPlayers[j].granades.length; i++) 
 				{
-					for (var k:int = 0; k < allPlatformsOfLevel1.length; k++) 
+					for (k = 0; k < allPlatformsOfLevel1.length; k++) 
 					{
 						if(allPlayers[j].granades[i].model.MC_botHitBox.hitTestObject(allPlatformsOfLevel1[k]) && allPlayers[j].granades[i].fallSpeed>0)
 						{
+							allPlayers[j].granades[i].fallen=true;
 							allPlayers[j].granades[i].model.y=allPlatformsOfLevel1[k].y-allPlatformsOfLevel1[k].height;
-							allPlayers[j].granades[i].fallSpeed=allPlayers[j].granades[i].fallSpeed/-8;
-							allPlayers[j].granades[i].speed=allPlayers[j].granades[i].speed/1.1;
+							allPlayers[j].granades[i].fallSpeed=allPlayers[j].granades[i].fallSpeed/-2;
+							allPlayers[j].granades[i].speed=allPlayers[j].granades[i].speed/1.5;
 						}      
 					}
+					for (k= 0; k < allPlayers.length; k++) 
+					{
+						if(j!=k && allPlayers[j].granades[i].model.hitTestObject(allPlayers[k].model) && allPlayers[j].granades[i].currentColdownToApplyForceOnPlayer<=0)
+						{
+							var direction:Point = new Point;
+							var distance:Point = new Point;
+							var radians:Number;
+							var degrees:Number;
+							
+							
+							distance.x = allPlayers[j].granades[i].model.x - allPlayers[k].model.mc_forceApply.x;
+							distance.y = allPlayers[j].granades[i].model.y - allPlayers[k].model.mc_forceApply.y;
+							radians = Math.atan2(distance.y, distance.x);
+							degrees = radians*180/Math.PI;
+							
+							direction.x = Math.cos(degrees);
+							direction.y = Math.sin(degrees);
+							
+							allPlayers[k].flyByGranadeHit(direction, allPlayers[j].granades[i].force);
+							allPlayers[j].granades[i].currentColdownToApplyForceOnPlayer=allPlayers[j].granades[i].coldownToApplyForceOnPlayer;
+							
+						}    
+					}
+					
 				}
 			}
 		}
@@ -468,8 +516,9 @@ package
 					} 
 				}
 			}
-			
 		}
+		
+		
 		//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	}
 	

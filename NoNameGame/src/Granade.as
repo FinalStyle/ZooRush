@@ -10,18 +10,21 @@ package
 	public class Granade
 	{
 		public var model:MovieClip;
-		public var speed:Number = 30;
+		public var speed:Number = 20;
 		public var degrees:Number;		
 		public var radians:Number;
 		public var direction:Point = new Point();
 		public var distance:Point = new Point();
-		public var damage:int;
+		public var force:int=10;
 		
-		public var fallSpeed:int = 1;
+		public var fallSpeed:Number = 1;
 		public var grav:int = 1;
 		
-		public var timeToExplode:int=3000;
+		public var timeToExplode:int=1000;
 		public var currentTimeToExplode:Number=timeToExplode;
+		
+		public var coldownToApplyForceOnPlayer:int = 3000;
+		public var currentColdownToApplyForceOnPlayer:Number = 0;
 		
 		public var fallen:Boolean=false;
 		
@@ -54,28 +57,27 @@ package
 		}
 		public function fall():void
 		{
-			if(fallSpeed!=0)
-			{
-				model.y += fallSpeed;
-				fallSpeed+=grav;
-			}
-			else
-			{
-				fallen=true;
-				fallSpeed=5;
-			}
+			model.y+=fallSpeed;
+			fallSpeed+=grav;
 		}
 		public function update():void
 		{
-			
-			
-			model.x += direction.x * speed*model.scaleX;
+			fall();
+			model.x += direction.x * speed *model.scaleX;
 			if(!fallen)
 			{
-				model.y += direction.y * speed*model.scaleX;
+				model.y += direction.y * speed * model.scaleX;
 			}
-			fall();
-			
+			currentColdownToApplyForceOnPlayer-=1000/60;
+			if(currentColdownToApplyForceOnPlayer<=0)
+			{
+				force=50;
+			}
+			else
+			{
+				force=0;
+			}
+				
 		}
 		public function destroy(parent:MovieClip):void
 		{

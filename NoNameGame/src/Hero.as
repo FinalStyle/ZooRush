@@ -5,6 +5,7 @@ package
 	import flash.display.MovieClip;
 	import flash.events.Event;
 	import flash.events.KeyboardEvent;
+	import flash.geom.Point;
 	import flash.ui.Keyboard;
 	
 	public class Hero
@@ -64,11 +65,7 @@ package
 		}
 		public function Update():void
 		{
-			
-		
-			
-				framecontador++
-		
+			framecontador++;
 			
 			checkKeys();
 			fall();
@@ -109,13 +106,13 @@ package
 			}
 			
 		}
-		public function spawn(PosX:int, parent:MovieClip):void
+		public function spawn(PosX:int, PosY:int, parent:MovieClip):void
 		{
 			model = Locator.assetsManager.getMovieClip("MCPlayer");
 			//Locator.mainStage.addChild(model)
 			parent.addChild(model);
 			model.x=PosX;
-			model.y=Locator.mainStage.stageHeight/2;
+			model.y=PosY;
 			currentlvl = parent;
 			model.MC_sideHitBox.alpha=0;
 			model.MC_botHitBox.alpha=0;
@@ -132,10 +129,10 @@ package
 				}
 				model.x+=speed*direction;
 				moviendoce=true;
-			
+				
 			}
-				model.scaleX=1*direction;
-				canmove=true;
+			model.scaleX=1*direction;
+			canmove=true;
 		}
 		/////////////////////////////////////////////////////////////////////////////////////////////////////
 		///////////////////////////////////////////Granade and Arrow Functions///////////////////////////////////////////////
@@ -167,39 +164,33 @@ package
 				granades[i].currentTimeToExplode-=1000/60;
 				if (granades[i].currentTimeToExplode<=0) 
 				{
-					
 					granades[i].destroy(currentlvl);
 					granades.splice(i, 1);
 				}
 			}
 		}
-		
+		public function flyByGranadeHit(direction:Point, force:int):void
+		{
+			model.x += direction.x * force;
+			model.y += direction.y * force;
+		}
 		///////////////////////////////////////////////////////////////////////////////////////////////////////
 		public function destroy():void
 		{
-			currentlvl.removeChild(model);
-			
-			
-			
-			
+			currentlvl.removeChild(model);			
 		}
 		
 		public function checkKeys():void
 		{
-			if (up && canJump&&JumpContador<2&&fallSpeed>-8) 
+			if (up&&canJump&&JumpContador<2) 
 			{
-				
 				fallSpeed=-15;
 				canJump = false;
 				JumpContador++
-					
 			}
 			if (down&&canmove) 
 			{
-				
-					framecontador=0;
-				      
-				
+				framecontador=0;
 			}
 			if (left) 
 			{
@@ -268,10 +259,8 @@ package
 				case leftKey:
 				{
 					left=false;
-				
 					moviendoce=false;
-						model.MC_model.gotoAndPlay("Idle");
-					
+					model.MC_model.gotoAndPlay("Idle");
 					break;
 				}
 				case rightKey:
@@ -283,18 +272,12 @@ package
 				}
 				case atk1Key:
 				{
-					
 					throwGranade();
 					deleteArrowForThrowingGranade();
 					holding=false;
 					break;
 				}
-					
 			}
 		}
-		
-		
-		
 	}
-	
 }
