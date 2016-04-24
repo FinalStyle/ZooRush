@@ -48,6 +48,7 @@ package
 		public var s:Boolean;
 		public var menu1:MovieClip;
 		public var menu2:MovieClip;
+		public var creditos:MovieClip;
 		//////////////////////////////////////////Cannon///////////////////////////////////////////////
 		public var cannon1:Cannon;
 		public var cannon2:Cannon;
@@ -66,14 +67,16 @@ package
 		{
 			menu1=Locator.assetsManager.getMovieClip("MC_Menu1");
 			menu2=Locator.assetsManager.getMovieClip("MC_Menu2");
+			creditos=Locator.assetsManager.getMovieClip("MC_Creditos");
 			Locator.mainStage.addChild(menu1)
 			menu1.MC_creditos.alpha=0
-			Locator.mainStage.addEventListener(KeyboardEvent.KEY_UP, keyUp)
+			w=true;
+			Locator.mainStage.addEventListener(KeyboardEvent.KEY_DOWN, keyDown)
 		}
 		
 	
 		
-		protected function keyUp(e:KeyboardEvent):void
+		protected function keyDown(e:KeyboardEvent):void
 		{
 			switch(e.keyCode)
 			{
@@ -81,34 +84,75 @@ package
 				{
 					if (Locator.mainStage.contains(menu1))
 					{
+						menu1.MC_jugar.alpha=1
 						menu1.MC_creditos.alpha=0	
+						
+						
 					}
 					else
 					{
 						menu2.MC_level2.alpha=0	
+						menu2.MC_level1.alpha=1
+							
 					}
 					w=true;
 					s=false;
-					
+					break;
 				}
 				case Keyboard.S:
 				{
+					if (Locator.mainStage.contains(menu1))
+					{
+						menu1.MC_jugar.alpha=0	
+						menu1.MC_creditos.alpha=1
+						trace(menu1.MC_jugar.alpha)
+					}
+					else
+					{
+						menu2.MC_level1.alpha=0	
+						menu2.MC_level2.alpha=1
+					}
 					s=true;
 					w=false;
+					break;
 				}
 				case Keyboard.ENTER:
 				{
-					if (w=true&&Locator.mainStage.contains(menu1))
+					if (w==true&&Locator.mainStage.contains(menu1))
 					{
 						Locator.mainStage.removeChild(menu1)
 						Locator.mainStage.addChild(menu2)
+						menu2.MC_level1.alpha=1
+						menu2.MC_level2.alpha=0
+							w=true;
+							
 					}
-					else if (w=true&&Locator.mainStage.contains(menu2))
+					else if (w==false&&Locator.mainStage.contains(menu1))
+					{
+						Locator.mainStage.removeChild(menu1)
+						Locator.mainStage.addChild(creditos)
+					}
+					else if (Locator.mainStage.contains(creditos))
+					{
+						Locator.mainStage.removeChild(creditos)
+						Locator.mainStage.addChild(menu1)
+						menu1.MC_jugar.alpha=1
+						menu1.MC_creditos.alpha=0
+							w=true;
+					}
+					else if (w==false&&Locator.mainStage.contains(menu2))
 					{
 						Locator.mainStage.removeChild(menu2)
-						evStartGame("level1");
+						evStartGame("MCLevel2");
+						trace("leve2")
 					}
-					
+					else if (w==true&&Locator.mainStage.contains(menu2))
+					{
+						Locator.mainStage.removeChild(menu2)
+						evStartGame("MCLevel1");
+						trace ("level1")
+					}
+					break;
 				}
 			}
 			
@@ -137,7 +181,7 @@ package
 			
 			
 			
-			this.level=Locator.assetsManager.getMovieClip("MCLevel1");
+			this.level=Locator.assetsManager.getMovieClip(level);
 			
 			camLookAt= Locator.assetsManager.getMovieClip("MCBackGround");
 			camLookAt.scaleX = camLookAt.scaleY = 0.05;
