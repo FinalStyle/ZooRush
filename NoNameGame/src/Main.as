@@ -442,7 +442,7 @@ package
 		
 		public function checkDeaths():void
 		{
-			for (var k:int = allPlayers.length-1; k >= 0; k--) 
+			/*for (var k:int = allPlayers.length-1; k >= 0; k--) 
 			{
 				for (var i:int = 0; i < allCannons.length; i++) 
 				{
@@ -453,7 +453,7 @@ package
 						trace("Dead")
 					}
 				}
-			}
+			}*/
 		}
 		public function checkPlayersColitions():void
 		{

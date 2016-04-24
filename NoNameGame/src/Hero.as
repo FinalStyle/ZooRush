@@ -12,7 +12,7 @@ package
 	{
 		public var hp:int = 100;
 		public var model:MovieClip;
-		public var speed:int = 12;
+		public var speed:int = 1;
 		
 		public var fallSpeed:int = 1;
 		public var grav:int = 1;
