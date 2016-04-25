@@ -97,9 +97,9 @@ package
 			var pGlobal:Point = obj.parent.localToGlobal(pLocal);
 			var pCamera:Point = view.globalToLocal(pGlobal);
 			
-			
 			x = pCamera.x * zoom - Locator.mainStage.stageWidth/2;
 			y = pCamera.y * zoom - Locator.mainStage.stageHeight/2;
+			
 		}
 	}
 }

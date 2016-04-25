@@ -12,7 +12,7 @@ package
 	{
 		public var hp:int = 100;
 		public var model:MovieClip;
-		public var speed:int = 1;
+		public var speed:int = 12;
 		
 		public var fallSpeed:int = 1;
 		public var grav:int = 1;
@@ -50,6 +50,9 @@ package
 		public var segundero:int=2;
 		public var framecontador:int=60;
 		///////////////////////////////////////////////////////////////////////
+		public var gotHitByGranade:Boolean=false;
+		public var directionToFlyByGranade:Point = new Point;
+		public var forceAppliedByGranade:int = 20;
 		
 		public function Hero(up:int, down:int, right:int, left:int, shoot:int, atk1:int)
 		{
@@ -75,6 +78,16 @@ package
 				granades[i].update();
 			}
 			uptdateGranadeCounters();
+			if(gotHitByGranade)
+			{
+				flyByGranadeHit(directionToFlyByGranade, forceAppliedByGranade);
+				forceAppliedByGranade--;
+				if(forceAppliedByGranade<=5)
+				{
+					gotHitByGranade=false;
+					forceAppliedByGranade=20;
+				}
+			}
 			
 		}
 		public function fall():void

@@ -6,6 +6,7 @@ package
 	
 	import flash.display.MovieClip;
 	import flash.display.Sprite;
+	import flash.display.Stage;
 	import flash.events.Event;
 	import flash.events.KeyboardEvent;
 	import flash.events.MouseEvent;
@@ -23,8 +24,8 @@ package
 	{		
 		public var player:Hero;
 		public var player2:Hero;
+		public var player3:Hero;
 		public var level:MovieClip;
-		public var camLookAt:MovieClip;
 		
 		public var gameEnded:Boolean = false;
 		
@@ -32,17 +33,19 @@ package
 		public var allWallsOfLevel1:Array;
 		
 		public var allPlayers:Vector.<Hero>;
-		
-		
+		public var playersPositionNearestToXEdges:Vector.<Point>;
+		public var playersPositionNearestToYEdges:Vector.<Point>;
 		//////////////////////////////////////CameraSet////////////////////////////////////////////
-		public var midPointScreen:Point;
+		public var camLookAt:MovieClip;
 		public var mid2Players:Point;
 		public var playersGlobalPositions:Vector.<Point>;
 		public var playersLocalPositions:Vector.<Point>;
 		public var playersLastLocalsPositions:Vector.<Point>;
-		public var canZoom:Boolean;
+		public var canZoomIn:Boolean=true;
 		public var cam:Camera;
 		public var sideLimitsX:Number;
+		
+		public var stop:Boolean=false;
 		/////////////////////////////////////////Menu//////////////////////////////////////////////////
 		public var w:Boolean;
 		public var s:Boolean;
@@ -74,7 +77,7 @@ package
 			Locator.mainStage.addEventListener(KeyboardEvent.KEY_DOWN, keyDown)
 		}
 		
-	
+		
 		
 		protected function keyDown(e:KeyboardEvent):void
 		{
@@ -93,7 +96,7 @@ package
 					{
 						menu2.MC_level2.alpha=0	
 						menu2.MC_level1.alpha=1
-							
+						
 					}
 					w=true;
 					s=false;
@@ -124,8 +127,8 @@ package
 						Locator.mainStage.addChild(menu2)
 						menu2.MC_level1.alpha=1
 						menu2.MC_level2.alpha=0
-							w=true;
-							
+						w=true;
+						
 					}
 					else if (w==false&&Locator.mainStage.contains(menu1))
 					{
@@ -138,7 +141,7 @@ package
 						Locator.mainStage.addChild(menu1)
 						menu1.MC_jugar.alpha=1
 						menu1.MC_creditos.alpha=0
-							w=true;
+						w=true;
 					}
 					else if (w==false&&Locator.mainStage.contains(menu2))
 					{
@@ -166,12 +169,10 @@ package
 			allPlayers= new Vector.<Hero>;
 			
 			//////////////////////////////////////CameraSet////////////////////////////////////////////
-			midPointScreen = new Point(0, 0);
 			mid2Players = new Point(0, 0);
 			playersGlobalPositions = new Vector.<Point>;
 			playersLocalPositions = new Vector.<Point>;
 			playersLastLocalsPositions = new Vector.<Point>;
-			canZoom = true;
 			
 			sideLimitsX=100;
 			///////////////////////////////////////////////////////////////////////////////////////////
@@ -183,7 +184,7 @@ package
 			
 			this.level=Locator.assetsManager.getMovieClip(level);
 			
-			camLookAt= Locator.assetsManager.getMovieClip("MCBackGround");
+			camLookAt=Locator.assetsManager.getMovieClip("MCBackGround");
 			camLookAt.scaleX = camLookAt.scaleY = 0.05;
 			camLookAt.alpha=0;
 			this.level.addChild(camLookAt);
@@ -197,24 +198,24 @@ package
 			allWallsToArrayLevel1();
 			
 			
-			
-			player = new RedPanda(Keyboard.W, Keyboard.S, Keyboard.D, Keyboard.A,Keyboard.SPACE, Keyboard.G);
+			player = new RedPanda(Keyboard.W, Keyboard.S, Keyboard.D, Keyboard.A,Keyboard.SPACE, Keyboard.Q);
 			player2 = new RedPanda(Keyboard.UP, Keyboard.DOWN, Keyboard.RIGHT, Keyboard.LEFT, Keyboard.COMMA, Keyboard.M);
-			
-			
-			
+			player3 = new RedPanda(Keyboard.Y, Keyboard.H, Keyboard.J, Keyboard.G, Keyboard.K, Keyboard.L);
 			
 			
 			player.spawn(this.level.MC_spawn.x, this.level.MC_spawn.y, this.level);
 			player2.spawn(this.level.MC_spawn2.x, this.level.MC_spawn2.y, this.level);
+			player3.spawn(this.level.MC_spawn.x+500, this.level.MC_spawn.y, this.level);
 			player2.model.scaleX*=-1
-			
-			mid2Players.x = (player.model.x + player2.model.x)/2
-			mid2Players.y = (player.model.y + player2.model.y)/2
-			allPlayers.push(player)
-			allPlayers.push(player2)
-			getPlayerPositionFromLocalToGlobal(player);
+				
+				allPlayers.push(player)
+				allPlayers.push(player2)
+				allPlayers.push(player3)
+				getPlayerPositionFromLocalToGlobal(player);
 			getPlayerPositionFromLocalToGlobal(player2);
+			getPlayerPositionFromLocalToGlobal(player3);
+			playersPositionNearestToXEdges= new Vector.<Point>;
+			playersPositionNearestToYEdges= new Vector.<Point>;
 			
 			
 			//*********************************Cannon Set*******************************//
@@ -234,24 +235,26 @@ package
 		
 		protected function offCamera(event:MouseEvent):void
 		{
-			zoomOut();
+			zoomIn();
 		}
 		//////////////////////////////////////////////////////////////////////////////
 		//////////////////////////////////Zoom////////////////////////////////////////
 		protected function zoomIn():void
 		{
-			cam.smoothZoom = cam.zoom * 1.1;
+			if(canZoomIn)
+			{
+				cam.smoothZoom = cam.zoom * 1.1;
+			}
 		}
 		
 		protected function zoomOut():void
 		{
 			cam.smoothZoom = cam.zoom / 1.3;
+			canZoomIn=true;
 		}		
 		///////////////////////////////////////////////////////////////////////////////
 		public function update(e:Event):void
 		{	
-			
-			
 			for (var i:int = 0; i < allPlayers.length; i++) 
 			{
 				allPlayers[i].Update();
@@ -259,22 +262,20 @@ package
 			cam.lookAt(camLookAt)
 			if(!gameEnded)
 			{
-				
 				/////////////////actualizo posiciones guardadas////////////////////
+				updatePlayerGlobalAndLocalPositions();
+				GetNearestPlayersToSides();
 				checkCamera();
-				updatePlayerGlobalPosition();
 				///////////////////////////Collitions//////////////////////////////
 				granadeCollitions()
-				missileCollitions();
 				if(cam.zoom>=1.2 || cam.zoom<=0.2)
 				{
-					canZoom=false
+					canZoomIn=false
 				}
-				
 			}
 			//*****checkPlayersColitions esta fuera del if porque necesito seguir comprobando colisiones del jugador que gana*****//
 			checkPlayersColitions();
-
+			
 			if(allPlayers.length==1)
 			{
 				gameEnded=true;
@@ -303,16 +304,11 @@ package
 				{
 					allCannons[j].update(GetNearestPlayerToCannon(allCannons[j].model));
 				}
-				checkDeaths();
 			}
 		}
 		
-		
-		
-		
 		public function GetNearestPlayerToCannon(cannon:MovieClip):Point 
 		{
-			
 			var pLocal:Point = new Point(0, 0);
 			var pGlobal:Point;
 			pLocal= new Point(cannon.x, cannon.y);
@@ -321,8 +317,6 @@ package
 			var nearestRightPosition:Point = new Point (10000);
 			var nearestPlayerPosition:Point = new Point;
 			
-			
-			//trace("Cannon Pos X", pGlobal.x, "Cannon Pos Y", pGlobal.y)
 			for (var j:int = 0; j < playersLocalPositions.length; j++) 
 			{
 				if(playersLocalPositions[j].x<=pLocal.x && playersLocalPositions[j].x>nearestLeftPosition.x)
@@ -335,24 +329,53 @@ package
 					nearestRightPosition.x=playersLocalPositions[j].x;
 					nearestRightPosition.y=playersLocalPositions[j].y;
 				}
-				//trace("NLP Pos X", nearestLeftPosition.x, "NLP Pos Y", nearestLeftPosition.y)
-				//trace("Despues NRP Pos X", nearestRightPosition.x, "NRP Pos Y", nearestRightPosition.y)
 			}
-			
 			if(pLocal.x - nearestLeftPosition.x < nearestRightPosition.x - pLocal.x)
 			{
-				//trace("resta1")
-				
 				nearestPlayerPosition = nearestLeftPosition
 			}
 			if(pLocal.x - nearestLeftPosition.x > nearestRightPosition.x - pLocal.x)
 			{
-				//trace("resta2")
 				nearestPlayerPosition = nearestRightPosition
 			}
-			
-			//trace("NPS Pos X", nearestPlayerPosition.x, "NPS Pos Y", nearestPlayerPosition.y)
 			return nearestPlayerPosition;
+		}
+		
+		public function GetNearestPlayersToSides():void 
+		{
+			var lowestXValue:Point = new Point(stage.stageWidth, 0);
+			var highestXValue:Point = new Point(0, 0);
+			var lowestYValue:Point = new Point(0, stage.stageHeight);
+			var highestYValue:Point = new Point(0, 0);
+			
+			var tempPlayerX:Vector.<Point> = new Vector.<Point>();
+			var tempPlayerY:Vector.<Point> = new Vector.<Point>();
+			for (var i:int = 0; i < playersGlobalPositions.length; i++) 
+			{
+				if(playersGlobalPositions[i].x<lowestXValue.x)
+				{
+					lowestXValue=playersGlobalPositions[i];
+				}
+				else if(playersGlobalPositions[i].x>highestXValue.x)
+				{
+					highestXValue=playersGlobalPositions[i];
+				}
+				if(playersGlobalPositions[i].y<lowestYValue.y)
+				{
+					lowestYValue=playersGlobalPositions[i];
+				}
+				else if(playersGlobalPositions[i].y>highestYValue.y)
+				{
+					highestYValue=playersGlobalPositions[i];
+				}
+			}
+			tempPlayerX.push(lowestXValue);
+			tempPlayerX.push(highestXValue);
+			tempPlayerY.push(lowestYValue);
+			tempPlayerY.push(highestYValue);
+			playersPositionNearestToXEdges=tempPlayerX;
+			playersPositionNearestToYEdges=tempPlayerY;
+			
 			
 		}
 		public function getPlayerPositionFromLocalToGlobal(player:Hero):void
@@ -360,14 +383,13 @@ package
 			var pLocal:Point = new Point(0, 0);
 			var pGlobal:Point;
 			
-			
 			pLocal= new Point(player.model.x, player.model.y);
 			pGlobal = player.model.parent.localToGlobal(pLocal);
 			playersLocalPositions.push(pLocal);
 			playersGlobalPositions.push(pGlobal);
 			playersLastLocalsPositions.push(pLocal)
 		}
-		public function updatePlayerGlobalPosition():void
+		public function updatePlayerGlobalAndLocalPositions():void
 		{
 			var tempPLocal:Point;
 			var tempPGlobal:Point;
@@ -384,57 +406,61 @@ package
 		
 		public function checkCamera():void
 		{
-			mid2Players.x = (player.model.x + player2.model.x)/2;
-			mid2Players.y = (player.model.y + player2.model.y)/2;
-			camLookAt.x= mid2Players.x;
-			camLookAt.y= mid2Players.y;
-			
-			for (var i:int = 0; i < allPlayers.length; i++) 
+s			for (var i:int = playersPositionNearestToXEdges.length-1; i >= 0 ; i--) 
 			{
-				var aquienresto:int;
+				mid2Players.x = (playersPositionNearestToXEdges[0].x + playersPositionNearestToXEdges[1].x)/2;
+				if(playersPositionNearestToXEdges[0].x<sideLimitsX)
+				{
+					zoomOut()
+				}
+				else if(playersPositionNearestToXEdges[1].x>stage.stageWidth-sideLimitsX)
+				{
+					zoomOut()
+				}
 				
-				if(i==0)
-				{
-					aquienresto=1
-				}
-				else
-				{
-					aquienresto=0
-				}
-				
-				if(playersGlobalPositions[i].x<sideLimitsX)
+			}
+			for (i = playersPositionNearestToYEdges.length-1; i >= 0 ; i--) 
+			{
+				mid2Players.y = (playersPositionNearestToYEdges[0].y + playersPositionNearestToYEdges[1].y)/2;
+				if(playersPositionNearestToYEdges[0].y<100)
 				{
 					zoomOut()
-					canZoom=true
 				}
-				else if(playersGlobalPositions[i].x>stage.stageWidth-sideLimitsX)
+				else if(playersPositionNearestToYEdges[1].y>stage.stageHeight-100)
 				{
 					zoomOut()
-					canZoom=true
 				}
-				else if(playersGlobalPositions[i].y<100 && canZoom)
-				{
-					zoomOut()
-					canZoom=true
-				}
-				else if(playersGlobalPositions[i].y>stage.stageHeight-100 && canZoom)
-				{
-					zoomOut()
-					canZoom=true
-				}
-				else if(playersLastLocalsPositions[i].x<playersLocalPositions[i].x && allPlayers[i].model.x - allPlayers[aquienresto].model.x<0 && canZoom)
-				{
-					//trace("playerlastlocal- " + playersLastLocalsPositions[i].x, "currentlocal- ",  playersLocalPositions[i].x, " i: ", i);
-					zoomIn()
-					canZoom=true
-				}
-				else if(playersLastLocalsPositions[i].x>playersLocalPositions[i].x && allPlayers[i].model.x - allPlayers[aquienresto].model.x>0 && canZoom)
-				{
-					//trace("playerlastlocal- " + playersLastLocalsPositions[i].x, "currentlocal- ",  playersLocalPositions[i].x, " i: ", i);
-					zoomIn()
-					canZoom=true
-				}
-			}			
+			}
+			if(camLookAt.x>mid2Players.x+10)
+			{
+				camLookAt.x-=5;
+			}
+			else if(camLookAt.x<mid2Players.x-10)
+			{
+				camLookAt.x+=5;
+			}
+			if(camLookAt.y>mid2Players.y+10)
+			{
+				camLookAt.y-=5;
+			}
+			else if(camLookAt.y<mid2Players.y-10)
+			{
+				camLookAt.y+=5;
+			}
+			/*
+			if(playersLastLocalsPositions[i].x<playersLocalPositions[i].x && allPlayers[i].model.x - allPlayers[aquienresto].model.x<0 && canZoom)
+			{
+			//trace("playerlastlocal- " + playersLastLocalsPositions[i].x, "currentlocal- ",  playersLocalPositions[i].x, " i: ", i);
+			zoomIn()
+			canZoom=true
+			}
+			else if(playersLastLocalsPositions[i].x>playersLocalPositions[i].x && allPlayers[i].model.x - allPlayers[aquienresto].model.x>0 && canZoom)
+			{
+			//trace("playerlastlocal- " + playersLastLocalsPositions[i].x, "currentlocal- ",  playersLocalPositions[i].x, " i: ", i);
+			zoomIn()
+			canZoom=true
+			}
+			}	*/
 		}
 		
 		//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -442,7 +468,7 @@ package
 		
 		public function checkDeaths():void
 		{
-			/*for (var k:int = allPlayers.length-1; k >= 0; k--) 
+			for (var k:int = allPlayers.length-1; k >= 0; k--) 
 			{
 				for (var i:int = 0; i < allCannons.length; i++) 
 				{
@@ -453,7 +479,7 @@ package
 						trace("Dead")
 					}
 				}
-			}*/
+			}
 		}
 		public function checkPlayersColitions():void
 		{
@@ -505,30 +531,28 @@ package
 		}	
 		public function granadeCollitions():void
 		{
-			var k:int;
-			for (var j:int = 0; j < allPlayers.length; j++) 
+			for (var j:int = allPlayers.length-1; j >= 0; j--) 
 			{
-				for (var i:int = 0; i < allPlayers[j].granades.length; i++) 
+				for (var i:int = allPlayers[j].granades.length-1; i >= 0; i--) 
 				{
-					for (k = 0; k < allPlatformsOfLevel1.length; k++) 
+					for (var l:int = 0; l < allPlatformsOfLevel1.length; l++) 
 					{
-						if(allPlayers[j].granades[i].model.MC_botHitBox.hitTestObject(allPlatformsOfLevel1[k]) && allPlayers[j].granades[i].fallSpeed>0)
+						if(allPlayers[j].granades[i].model.MC_botHitBox.hitTestObject(allPlatformsOfLevel1[l]) && allPlayers[j].granades[i].fallSpeed>0)
 						{
 							allPlayers[j].granades[i].fallen=true;
-							allPlayers[j].granades[i].model.y=allPlatformsOfLevel1[k].y-allPlatformsOfLevel1[k].height;
+							allPlayers[j].granades[i].model.y=allPlatformsOfLevel1[l].y-allPlatformsOfLevel1[l].height;
 							allPlayers[j].granades[i].fallSpeed=allPlayers[j].granades[i].fallSpeed/-2;
 							allPlayers[j].granades[i].speed=allPlayers[j].granades[i].speed/1.5;
 						}      
 					}
-					for (k= 0; k < allPlayers.length; k++) 
+					for (var k:int= allPlayers.length-1; k >= 0; k--) 
 					{
-						if(j!=k && allPlayers[j].granades[i].model.hitTestObject(allPlayers[k].model) && allPlayers[j].granades[i].currentColdownToApplyForceOnPlayer<=0)
+						if(k!=j && allPlayers[j].granades[i].model.hitTestObject(allPlayers[k].model) && allPlayers[j].granades[i].currentColdownToApplyForceOnPlayer<=0)
 						{
 							var direction:Point = new Point;
 							var distance:Point = new Point;
 							var radians:Number;
 							var degrees:Number;
-							
 							
 							distance.x = allPlayers[j].granades[i].model.x - allPlayers[k].model.mc_forceApply.x;
 							distance.y = allPlayers[j].granades[i].model.y - allPlayers[k].model.mc_forceApply.y;
@@ -537,10 +561,13 @@ package
 							
 							direction.x = Math.cos(degrees);
 							direction.y = Math.sin(degrees);
-							
-							allPlayers[k].flyByGranadeHit(direction, allPlayers[j].granades[i].force);
-							allPlayers[j].granades[i].currentColdownToApplyForceOnPlayer=allPlayers[j].granades[i].coldownToApplyForceOnPlayer;
-							
+							trace("Entro")
+							allPlayers[k].gotHitByGranade=true;
+							allPlayers[k].directionToFlyByGranade=direction;
+							//allPlayers[j].granades[i].currentColdownToApplyForceOnPlayer=allPlayers[j].granades[i].coldownToApplyForceOnPlayer;
+							allPlayers[j].granades[i].destroy(level);
+							allPlayers[j].granades.splice(i, 1);
+							break;
 						}    
 					}
 					
