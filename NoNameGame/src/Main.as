@@ -206,7 +206,7 @@ package
 			player2 = new RedPanda(Keyboard.UP, Keyboard.DOWN, Keyboard.RIGHT, Keyboard.LEFT, Keyboard.COMMA, Keyboard.M);
 			player3 = new RedPanda(Keyboard.Y, Keyboard.H, Keyboard.J, Keyboard.G, Keyboard.K, Keyboard.L);
 			player4 = new RedPanda(Keyboard.NUMPAD_8, Keyboard.NUMPAD_5, Keyboard.NUMPAD_6, Keyboard.NUMPAD_4, Keyboard.NUMPAD_7, Keyboard.NUMPAD_9);
-						
+			
 			player.spawn(this.level.MC_spawn.x, this.level.MC_spawn.y, this.level);
 			player2.spawn(this.level.MC_spawn2.x, this.level.MC_spawn2.y, this.level);
 			player3.spawn(this.level.MC_spawn.x+500, this.level.MC_spawn.y, this.level);
@@ -408,7 +408,7 @@ package
 					highestValues.y=playersGlobalPositions[i].y;
 				}
 			}
-			trace("Low", lowestValues, "High", highestValues)
+			//trace("Low", lowestValues, "High", highestValues)
 			tempPlayer.push(lowestValues);
 			tempPlayer.push(highestValues);
 			playersGlobalPositionNearestToEdges=tempPlayer;
@@ -473,19 +473,19 @@ package
 			
 			/*if(camLookAt.x>mid2Players.x+10)
 			{
-				camLookAt.x-=5;
+			camLookAt.x-=5;
 			}
 			else if(camLookAt.x<mid2Players.x-10)
 			{
-				camLookAt.x+=5;
+			camLookAt.x+=5;
 			}
 			if(camLookAt.y>mid2Players.y+10)
 			{
-				camLookAt.y-=5;
+			camLookAt.y-=5;
 			}
 			else if(camLookAt.y<mid2Players.y-10)
 			{
-				camLookAt.y+=5;
+			camLookAt.y+=5;
 			}*/
 			/*
 			if(playersLastLocalsPositions[i].x<playersLocalPositions[i].x && allPlayers[i].model.x - allPlayers[aquienresto].model.x<0 && canZoom)
@@ -516,7 +516,6 @@ package
 					{
 						allPlayers[k].destroy();
 						allPlayers.splice(k, 1);
-						trace("Dead")
 					}
 				}
 			}
@@ -569,6 +568,7 @@ package
 				}
 			}
 		}	
+		
 		public function granadeCollitions():void
 		{
 			for (var j:int = allPlayers.length-1; j >= 0; j--) 
@@ -577,12 +577,16 @@ package
 				{
 					for (var l:int = 0; l < allPlatformsOfLevel1.length; l++) 
 					{
-						if(allPlayers[j].granades[i].model.MC_botHitBox.hitTestObject(allPlatformsOfLevel1[l]) && allPlayers[j].granades[i].fallSpeed>0)
+						if(allPlayers[j].granades[i].model.MC_botHitBox.hitTestObject(allPlatformsOfLevel1[l]) && allPlayers[j].granades[i].fallSpeed>10)
 						{
+							trace(allPlayers[j].granades[i].fallSpeed)
 							allPlayers[j].granades[i].fallen=true;
 							allPlayers[j].granades[i].model.y=allPlatformsOfLevel1[l].y-allPlatformsOfLevel1[l].height;
 							allPlayers[j].granades[i].fallSpeed=allPlayers[j].granades[i].fallSpeed/-2;
 							allPlayers[j].granades[i].speed=allPlayers[j].granades[i].speed/1.5;
+							trace("colisiona")
+							
+
 						}      
 					}
 					for (var k:int= allPlayers.length-1; k >= 0; k--) 
@@ -594,14 +598,13 @@ package
 							var radians:Number;
 							var degrees:Number;
 							
-							distance.x = allPlayers[j].granades[i].model.x - allPlayers[k].model.mc_forceApply.x;
-							distance.y = allPlayers[j].granades[i].model.y - allPlayers[k].model.mc_forceApply.y;
+							distance.x = allPlayers[k].model.x- allPlayers[j].granades[i].model.x;
+							distance.y = allPlayers[k].model.y- allPlayers[j].granades[i].model.y;
 							radians = Math.atan2(distance.y, distance.x);
-							degrees = radians*180/Math.PI;
 							
-							direction.x = Math.cos(degrees);
-							direction.y = Math.sin(degrees);
-							trace("Entro")
+							direction.x = Math.cos(radians);
+							direction.y = Math.sin(radians);
+							//trace(direction)
 							allPlayers[k].gotHitByGranade=true;
 							allPlayers[k].directionToFlyByGranade=direction;
 							//allPlayers[j].granades[i].currentColdownToApplyForceOnPlayer=allPlayers[j].granades[i].coldownToApplyForceOnPlayer;
@@ -628,9 +631,5 @@ package
 				}
 			}
 		}
-		
-		
-		//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	}
-	
 }

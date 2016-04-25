@@ -15,11 +15,9 @@ package Engine
 		public function Locator()
 		{
 			mainStage = stage;
-			
 			console = new Console();
 			assetsManager = new AssetsManager();
 			trace("*** Engine Inicializado ***");
-			
 		}
 		
 	}
