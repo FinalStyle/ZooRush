@@ -187,6 +187,8 @@ package
 			camLookAt=Locator.assetsManager.getMovieClip("MCBackGround");
 			camLookAt.scaleX = camLookAt.scaleY = 0.05;
 			camLookAt.alpha=0;
+			camLookAt.x=stage.stageWidth/2;
+			camLookAt.y=stage.stageHeight/2;
 			this.level.addChild(camLookAt);
 			
 			
@@ -208,10 +210,10 @@ package
 			player3.spawn(this.level.MC_spawn.x+500, this.level.MC_spawn.y, this.level);
 			player2.model.scaleX*=-1
 				
-				allPlayers.push(player)
-				allPlayers.push(player2)
-				allPlayers.push(player3)
-				getPlayerPositionFromLocalToGlobal(player);
+			allPlayers.push(player)
+			allPlayers.push(player2)
+			allPlayers.push(player3)
+			getPlayerPositionFromLocalToGlobal(player);
 			getPlayerPositionFromLocalToGlobal(player2);
 			getPlayerPositionFromLocalToGlobal(player3);
 			playersPositionNearestToXEdges= new Vector.<Point>;
@@ -417,7 +419,15 @@ s			for (var i:int = playersPositionNearestToXEdges.length-1; i >= 0 ; i--)
 				{
 					zoomOut()
 				}
-				
+				trace(playersPositionNearestToXEdges[0].x>sideLimitsX+100, playersPositionNearestToXEdges[1].x>stage.stageWidth-sideLimitsX-100)
+				if(playersPositionNearestToXEdges[0].x>sideLimitsX+200)
+				{
+					zoomIn()
+				}
+				else if(playersPositionNearestToXEdges[1].x<stage.stageWidth-sideLimitsX-200)
+				{
+					zoomIn()
+				}
 			}
 			for (i = playersPositionNearestToYEdges.length-1; i >= 0 ; i--) 
 			{
@@ -433,19 +443,19 @@ s			for (var i:int = playersPositionNearestToXEdges.length-1; i >= 0 ; i--)
 			}
 			if(camLookAt.x>mid2Players.x+10)
 			{
-				camLookAt.x-=5;
+				camLookAt.x-=8;
 			}
 			else if(camLookAt.x<mid2Players.x-10)
 			{
-				camLookAt.x+=5;
+				camLookAt.x+=8;
 			}
 			if(camLookAt.y>mid2Players.y+10)
 			{
-				camLookAt.y-=5;
+				camLookAt.y-=8;
 			}
 			else if(camLookAt.y<mid2Players.y-10)
 			{
-				camLookAt.y+=5;
+				camLookAt.y+=8;
 			}
 			/*
 			if(playersLastLocalsPositions[i].x<playersLocalPositions[i].x && allPlayers[i].model.x - allPlayers[aquienresto].model.x<0 && canZoom)
