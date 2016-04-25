@@ -11,6 +11,7 @@ package
 	import flash.events.KeyboardEvent;
 	import flash.events.MouseEvent;
 	import flash.geom.Point;
+	import flash.media.Sound;
 	import flash.sampler.NewObjectSample;
 	import flash.text.engine.Kerning;
 	import flash.ui.Keyboard;
@@ -52,6 +53,8 @@ package
 		public var menu1:MovieClip;
 		public var menu2:MovieClip;
 		public var creditos:MovieClip;
+		/////////////////////////////////////////Audio//////////////////////////////////////////////////
+		public var audio:SoundController
 		//////////////////////////////////////////Cannon///////////////////////////////////////////////
 		public var cannon1:Cannon;
 		public var cannon2:Cannon;
@@ -75,6 +78,11 @@ package
 			menu1.MC_creditos.alpha=0
 			w=true;
 			Locator.mainStage.addEventListener(KeyboardEvent.KEY_DOWN, keyDown)
+				
+			var song:Sound=	Locator.assetsManager.getSound("song1");
+			audio = new SoundController (song);
+			audio.play(0)
+			audio.volume=0.1;
 		}
 		
 		
