@@ -10,7 +10,7 @@ package
 	public class Granade
 	{
 		public var model:MovieClip;
-		public var speed:Number = 20;
+		public var speed:Number = 30;
 		public var degrees:Number;		
 		public var radians:Number;
 		public var direction:Point = new Point();

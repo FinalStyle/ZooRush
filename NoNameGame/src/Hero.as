@@ -12,7 +12,7 @@ package
 	{
 		public var hp:int = 100;
 		public var model:MovieClip;
-		public var speed:int = 12;
+		public var speed:int = 10;
 		
 		public var fallSpeed:int = 1;
 		public var grav:int = 1;
@@ -197,7 +197,7 @@ package
 		{
 			if (up&&canJump&&JumpContador<2) 
 			{
-				fallSpeed=-15;
+				fallSpeed=-18;
 				canJump = false;
 				JumpContador++
 			}
