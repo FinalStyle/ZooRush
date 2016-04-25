@@ -67,6 +67,7 @@ package
 			{
 				zoom = currentTarget;
 				Locator.mainStage.removeEventListener(Event.ENTER_FRAME, evRefreshCameraZoom);
+				Main.canZoomIn=true;
 			}
 			
 		}

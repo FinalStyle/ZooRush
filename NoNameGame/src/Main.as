@@ -41,7 +41,7 @@ package
 		public var playersGlobalPositions:Vector.<Point>;
 		public var playersLocalPositions:Vector.<Point>;
 		public var playersLastLocalsPositions:Vector.<Point>;
-		public var canZoomIn:Boolean=true;
+		public static var canZoomIn:Boolean=true;
 		public var cam:Camera;
 		public var sideLimitsX:Number;
 		
@@ -87,16 +87,13 @@ package
 				{
 					if (Locator.mainStage.contains(menu1))
 					{
-						menu1.MC_jugar.alpha=1
-						menu1.MC_creditos.alpha=0	
-						
-						
+						menu1.MC_jugar.alpha=1;
+						menu1.MC_creditos.alpha=0;
 					}
 					else
 					{
-						menu2.MC_level2.alpha=0	
-						menu2.MC_level1.alpha=1
-						
+						menu2.MC_level2.alpha=0;
+						menu2.MC_level1.alpha=1;
 					}
 					w=true;
 					s=false;
@@ -106,14 +103,13 @@ package
 				{
 					if (Locator.mainStage.contains(menu1))
 					{
-						menu1.MC_jugar.alpha=0	
-						menu1.MC_creditos.alpha=1
-						trace(menu1.MC_jugar.alpha)
+						menu1.MC_jugar.alpha=0;
+						menu1.MC_creditos.alpha=1;
 					}
 					else
 					{
-						menu2.MC_level1.alpha=0	
-						menu2.MC_level2.alpha=1
+						menu2.MC_level1.alpha=0;
+						menu2.MC_level2.alpha=1;
 					}
 					s=true;
 					w=false;
@@ -123,35 +119,35 @@ package
 				{
 					if (w==true&&Locator.mainStage.contains(menu1))
 					{
-						Locator.mainStage.removeChild(menu1)
-						Locator.mainStage.addChild(menu2)
-						menu2.MC_level1.alpha=1
-						menu2.MC_level2.alpha=0
+						Locator.mainStage.removeChild(menu1);
+						Locator.mainStage.addChild(menu2);
+						menu2.MC_level1.alpha=1;
+						menu2.MC_level2.alpha=0;
 						w=true;
 						
 					}
 					else if (w==false&&Locator.mainStage.contains(menu1))
 					{
-						Locator.mainStage.removeChild(menu1)
-						Locator.mainStage.addChild(creditos)
+						Locator.mainStage.removeChild(menu1);
+						Locator.mainStage.addChild(creditos);
 					}
 					else if (Locator.mainStage.contains(creditos))
 					{
-						Locator.mainStage.removeChild(creditos)
-						Locator.mainStage.addChild(menu1)
-						menu1.MC_jugar.alpha=1
-						menu1.MC_creditos.alpha=0
+						Locator.mainStage.removeChild(creditos);
+						Locator.mainStage.addChild(menu1);
+						menu1.MC_jugar.alpha=1;
+						menu1.MC_creditos.alpha=0;
 						w=true;
 					}
 					else if (w==false&&Locator.mainStage.contains(menu2))
 					{
-						Locator.mainStage.removeChild(menu2)
+						Locator.mainStage.removeChild(menu2);
 						evStartGame("MCLevel2");
 						trace("leve2")
 					}
 					else if (w==true&&Locator.mainStage.contains(menu2))
 					{
-						Locator.mainStage.removeChild(menu2)
+						Locator.mainStage.removeChild(menu2);
 						evStartGame("MCLevel1");
 						trace ("level1")
 					}
@@ -208,11 +204,11 @@ package
 			player.spawn(this.level.MC_spawn.x, this.level.MC_spawn.y, this.level);
 			player2.spawn(this.level.MC_spawn2.x, this.level.MC_spawn2.y, this.level);
 			player3.spawn(this.level.MC_spawn.x+500, this.level.MC_spawn.y, this.level);
-			player2.model.scaleX*=-1
-				
-			allPlayers.push(player)
-			allPlayers.push(player2)
-			allPlayers.push(player3)
+			player2.model.scaleX*=-1;
+			
+			allPlayers.push(player);
+			allPlayers.push(player2);
+			allPlayers.push(player3);
 			getPlayerPositionFromLocalToGlobal(player);
 			getPlayerPositionFromLocalToGlobal(player2);
 			getPlayerPositionFromLocalToGlobal(player3);
@@ -251,8 +247,9 @@ package
 		
 		protected function zoomOut():void
 		{
+			canZoomIn=false;
 			cam.smoothZoom = cam.zoom / 1.3;
-			canZoomIn=true;
+			
 		}		
 		///////////////////////////////////////////////////////////////////////////////
 		public function update(e:Event):void
@@ -408,7 +405,7 @@ package
 		
 		public function checkCamera():void
 		{
-s			for (var i:int = playersPositionNearestToXEdges.length-1; i >= 0 ; i--) 
+			s			for (var i:int = playersPositionNearestToXEdges.length-1; i >= 0 ; i--) 
 			{
 				mid2Players.x = (playersPositionNearestToXEdges[0].x + playersPositionNearestToXEdges[1].x)/2;
 				if(playersPositionNearestToXEdges[0].x<sideLimitsX)
@@ -420,14 +417,11 @@ s			for (var i:int = playersPositionNearestToXEdges.length-1; i >= 0 ; i--)
 					zoomOut()
 				}
 				trace(playersPositionNearestToXEdges[0].x>sideLimitsX+100, playersPositionNearestToXEdges[1].x>stage.stageWidth-sideLimitsX-100)
-				if(playersPositionNearestToXEdges[0].x>sideLimitsX+200)
+				if(playersPositionNearestToXEdges[0].x>sideLimitsX+100 && playersPositionNearestToXEdges[1].x<stage.stageWidth-sideLimitsX-100)
 				{
 					zoomIn()
 				}
-				else if(playersPositionNearestToXEdges[1].x<stage.stageWidth-sideLimitsX-200)
-				{
-					zoomIn()
-				}
+				
 			}
 			for (i = playersPositionNearestToYEdges.length-1; i >= 0 ; i--) 
 			{
@@ -443,19 +437,19 @@ s			for (var i:int = playersPositionNearestToXEdges.length-1; i >= 0 ; i--)
 			}
 			if(camLookAt.x>mid2Players.x+10)
 			{
-				camLookAt.x-=8;
+				camLookAt.x-=5;
 			}
 			else if(camLookAt.x<mid2Players.x-10)
 			{
-				camLookAt.x+=8;
+				camLookAt.x+=5;
 			}
 			if(camLookAt.y>mid2Players.y+10)
 			{
-				camLookAt.y-=8;
+				camLookAt.y-=5;
 			}
 			else if(camLookAt.y<mid2Players.y-10)
 			{
-				camLookAt.y+=8;
+				camLookAt.y+=5;
 			}
 			/*
 			if(playersLastLocalsPositions[i].x<playersLocalPositions[i].x && allPlayers[i].model.x - allPlayers[aquienresto].model.x<0 && canZoom)
