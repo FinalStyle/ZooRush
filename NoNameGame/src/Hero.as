@@ -195,6 +195,21 @@ package
 			Locator.mainStage.removeEventListener(KeyboardEvent.KEY_UP, keyUp)		
 		}
 		
+		public function pause (numero:int):void
+		{
+			if (numero<0)
+			{
+				Locator.mainStage.removeEventListener(KeyboardEvent.KEY_DOWN, keyDown)
+				Locator.mainStage.removeEventListener(KeyboardEvent.KEY_UP, keyUp)	
+			}
+			
+			else
+			{
+				Locator.mainStage.addEventListener(KeyboardEvent.KEY_DOWN, keyDown)
+				Locator.mainStage.addEventListener(KeyboardEvent.KEY_UP, keyUp)	
+			}
+		}
+		
 		public function checkKeys():void
 		{
 			if (up&&canJump&&JumpContador<2) 

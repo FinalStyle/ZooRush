@@ -269,7 +269,7 @@ package
 			for (var i:int = 0; i < allPlayers.length; i++) 
 			{
 				allPlayers[i].Update();
-				checkDeaths()
+				
 			}
 			cam.lookAt(camLookAt)
 			if(!gameEnded)
