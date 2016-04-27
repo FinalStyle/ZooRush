@@ -64,6 +64,8 @@ package
 		{
 			Locator.mainStage.removeEventListener(KeyboardEvent.KEY_DOWN, keyDown);
 			Locator.mainStage.removeEventListener(KeyboardEvent.KEY_UP, keyUp);
+			Locator.mainStage.removeChild(black);
+				Locator.mainStage.removeChild(model);
 		}
 	}
 }

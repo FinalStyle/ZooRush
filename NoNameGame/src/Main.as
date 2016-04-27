@@ -47,7 +47,7 @@ package
 		public var cam:Camera;
 		public var sideLimitsX:Number;
 		public var pause:Pause=new Pause;
-		
+		public var pauseboolean:Boolean=false;
 		public var stop:Boolean=false;
 		/////////////////////////////////////////Menu//////////////////////////////////////////////////
 		public var w:Boolean;
@@ -165,7 +165,16 @@ package
 					}
 					else if (gamestarted)
 					{
+						if (!pauseboolean)
+						{
 						pause.pauseon(camLookAt.x, camLookAt.y/2);
+						pauseboolean=true;
+						}
+						else
+						{
+							pause.pausedoff();
+							pauseboolean=false;
+						}
 					}
 					break;
 				}
@@ -273,6 +282,8 @@ package
 		///////////////////////////////////////////////////////////////////////////////
 		public function update(e:Event):void
 		{	
+			if (!pauseboolean)
+			{
 			for (var i:int = 0; i < allPlayers.length; i++) 
 			{
 				allPlayers[i].Update();
@@ -326,6 +337,7 @@ package
 			allCannons[j].update(GetNearestPlayerToCannon(allCannons[j].model));
 			}
 			}*/
+			}
 		}
 		
 		public function GetNearestPlayerToCannon(cannon:MovieClip):Point 
