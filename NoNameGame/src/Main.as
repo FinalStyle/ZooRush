@@ -61,6 +61,7 @@ package
 		public var cannon1:Cannon;
 		public var cannon2:Cannon;
 		public var allCannons:Vector.<Cannon>;
+	
 		
 		
 		
@@ -561,6 +562,8 @@ package
 						allPlayers[k].fallSpeed=0;
 						allPlayers[k].model.y=allPlatformsOfLevel1[i].y-allPlatformsOfLevel1[i].height;
 						allPlayers[k].JumpContador=0;
+						allPlayers[k].isjumping=false;
+						allPlayers[k].model.MC_model.rotation=allPlayers[k].rotacionoriginal;
 					}				
 				}
 				for (var j:int = 0; j < allWallsOfLevel1.length; j++) 

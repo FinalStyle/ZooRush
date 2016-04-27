@@ -14,6 +14,7 @@ package
 		public var model:MovieClip;
 		public var speed:int = 10;
 		
+		
 		public var fallSpeed:int = 1;
 		public var grav:int = 1;
 		
@@ -34,6 +35,8 @@ package
 		public var rightKey:int;
 		public var shootKey:int;
 		public var atk1Key:int;
+		public var isjumping:Boolean=false;
+		public var runtrigger:Boolean;
 		/////////////////////////
 		/** Variable para controlar si puede moverse o no */
 		public var canmove:Boolean = true;
@@ -53,6 +56,7 @@ package
 		public var gotHitByGranade:Boolean=false;
 		public var directionToFlyByGranade:Point = new Point;
 		public var forceAppliedByGranade:int = 20;
+		public var rotacionoriginal:int;
 		
 		public function Hero(up:int, down:int, right:int, left:int, shoot:int, atk1:int)
 		{
@@ -96,6 +100,14 @@ package
 			{
 				model.y += fallSpeed;
 				fallSpeed+=grav;
+			
+				
+				
+			}
+			else if(fallSpeed<0)
+			{
+				model.MC_model.gotoAndPlay("Jump_Idle");
+			
 			}
 			else
 			{
@@ -131,21 +143,32 @@ package
 			model.MC_botHitBox.alpha=0;
 			model.MC_HitBox.alpha=0;
 			model.MC_topHitBox.alpha=0;
+			rotacionoriginal=model.rotation
 		}
 		public function move(direction:int):void
 		{
 			if(canmove)
 			{
-				if(!moviendoce)
+				
+				if(!moviendoce&&!isjumping)
 				{
 					model.MC_model.gotoAndPlay("Run");
 				}
 				model.x+=speed*direction;
 				moviendoce=true;
-				
+				/*if (isjumping)
+				{
+					model.MC_model.rotation+=12*direction;
+				}*/
 			}
 			model.scaleX=1*direction;
 			canmove=true;
+			if (runtrigger!=isjumping&&isjumping==false)
+			{
+				trace ("triggeeeeeeer")
+				model.MC_model.gotoAndPlay("Run");
+			}
+			runtrigger=isjumping;
 		}
 		/////////////////////////////////////////////////////////////////////////////////////////////////////
 		///////////////////////////////////////////Granade and Arrow Functions///////////////////////////////////////////////
@@ -217,6 +240,8 @@ package
 				fallSpeed=-18;
 				canJump = false;
 				JumpContador++
+					model.MC_model.gotoAndPlay("Jump_Start");
+				isjumping=true;
 			}
 			if (down&&canmove) 
 			{
@@ -290,14 +315,22 @@ package
 				{
 					left=false;
 					moviendoce=false;
-					model.MC_model.gotoAndPlay("Idle");
+					if (!isjumping)
+					{
+						model.MC_model.gotoAndPlay("Idle");
+					}
+					
 					break;
 				}
 				case rightKey:
 				{
 					right=false;
 					moviendoce=false;
-					model.MC_model.gotoAndPlay("Idle");
+					if (!isjumping)
+					{
+						model.MC_model.gotoAndPlay("Idle");
+					}
+					
 					break;
 				}
 				case atk1Key:
