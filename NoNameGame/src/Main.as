@@ -28,7 +28,7 @@ package
 		public var player3:Hero;
 		public var player4:Hero;
 		public var level:MovieClip;
-		
+		public var gamestarted:Boolean=false;
 		public var gameEnded:Boolean = false;
 		
 		public var allPlatformsOfLevel1:Array;
@@ -46,6 +46,7 @@ package
 		public static var canZoomIn:Boolean=true;
 		public var cam:Camera;
 		public var sideLimitsX:Number;
+		public var pause:Pause=new Pause;
 		
 		public var stop:Boolean=false;
 		/////////////////////////////////////////Menu//////////////////////////////////////////////////
@@ -154,11 +155,17 @@ package
 					{
 						Locator.mainStage.removeChild(menu2);
 						evStartGame("MCLevel2");
+						gamestarted=true;
 					}
 					else if (w==true&&Locator.mainStage.contains(menu2))
 					{
 						Locator.mainStage.removeChild(menu2);
 						evStartGame("MCLevel1");
+						gamestarted=true;
+					}
+					else if (gamestarted)
+					{
+						pause.pauseon(camLookAt.x, camLookAt.y/2);
 					}
 					break;
 				}

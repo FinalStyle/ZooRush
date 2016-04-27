@@ -8,14 +8,16 @@ package
 
 	public class Pause
 	{
+		public var model:MovieClip;
+		public var black:MovieClip;
 		public var pause:Boolean;
 		public var reset:Boolean=false;
 		public var continuar:Boolean=false;
-		public var reset:Boolean=false;
+		public var resetgame:Boolean=false;
+	
 		public function Pause()
 		{
-			Locator.mainStage.addEventListener(KeyboardEvent.KEY_DOWN, keyDown)
-			Locator.mainStage.addEventListener(KeyboardEvent.KEY_UP, keyUp)		
+				
 		}
 		
 		protected function keyUp(e:KeyboardEvent):void
@@ -24,8 +26,7 @@ package
 			{
 				case Keyboard.ENTER:
 				{
-					up=false;
-					canJump=true;
+					
 					break;
 				}
 				
@@ -39,21 +40,30 @@ package
 			{
 				case Keyboard.ENTER:
 				{
-					up=true;
+					
 					break;
 				}
 				
 			}
 		}		
 		
-		public function pauseon():void
+		public function pauseon(x:Number, y:Number):void
 		{
-			
+			model=Locator.assetsManager.getMovieClip("MC_Pause");
+			black=Locator.assetsManager.getMovieClip("MC_Black");
+			Locator.mainStage.addEventListener(KeyboardEvent.KEY_DOWN, keyDown);
+			Locator.mainStage.addEventListener(KeyboardEvent.KEY_UP, keyUp);
+			Locator.mainStage.addChild(black);
+			black.alpha=0.4;
+			Locator.mainStage.addChild(model);
+			model.x=x;
+			model.y=y;
 		}
 		
 		public function pausedoff():void
 		{
-			
+			Locator.mainStage.removeEventListener(KeyboardEvent.KEY_DOWN, keyDown);
+			Locator.mainStage.removeEventListener(KeyboardEvent.KEY_UP, keyUp);
 		}
 	}
 }
