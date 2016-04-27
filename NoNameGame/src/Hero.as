@@ -190,7 +190,9 @@ package
 		///////////////////////////////////////////////////////////////////////////////////////////////////////
 		public function destroy():void
 		{
-			currentlvl.removeChild(model);			
+			currentlvl.removeChild(model);	
+			Locator.mainStage.removeEventListener(KeyboardEvent.KEY_DOWN, keyDown)
+			Locator.mainStage.removeEventListener(KeyboardEvent.KEY_UP, keyUp)		
 		}
 		
 		public function checkKeys():void

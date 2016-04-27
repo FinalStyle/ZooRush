@@ -33,6 +33,7 @@ package
 		
 		public var allPlatformsOfLevel1:Array;
 		public var allWallsOfLevel1:Array;
+		public var deadline:MovieClip;
 		
 		public var allPlayers:Vector.<Hero>;
 		//////////////////////////////////////CameraSet////////////////////////////////////////////
@@ -59,6 +60,7 @@ package
 		public var cannon1:Cannon;
 		public var cannon2:Cannon;
 		public var allCannons:Vector.<Cannon>;
+		
 		
 		
 		
@@ -193,7 +195,8 @@ package
 			camLookAt.y=stage.stageHeight/2;
 			this.level.addChild(camLookAt);
 			
-			
+			deadline=this.level.MC_dead;
+			deadline.alpha=0;
 			
 			cam.addToView(this.level);
 			cam.lookAt(camLookAt)
@@ -266,6 +269,7 @@ package
 			for (var i:int = 0; i < allPlayers.length; i++) 
 			{
 				allPlayers[i].Update();
+				checkDeaths()
 			}
 			cam.lookAt(camLookAt)
 			if(!gameEnded)
@@ -517,6 +521,12 @@ package
 						allPlayers[k].destroy();
 						allPlayers.splice(k, 1);
 					}
+					else if (allPlayers[k].model.MC_botHitBox.hitTestObject(deadline))
+					{
+						allPlayers[k].destroy();
+						allPlayers.splice(k, 1);
+						trace("se murio viteh")
+					}
 				}
 			}
 		}
@@ -524,6 +534,7 @@ package
 		{
 			for (var k:int =  allPlayers.length-1; k >= 0; k--) 
 			{
+				
 				for (var i:int = 0; i < allPlatformsOfLevel1.length; i++) 
 				{
 					if(allPlayers[k].model.MC_botHitBox.hitTestObject(allPlatformsOfLevel1[i])&&allPlayers[k].framecontador>=6)
@@ -571,6 +582,8 @@ package
 		
 		public function granadeCollitions():void
 		{
+			
+			
 			for (var j:int = allPlayers.length-1; j >= 0; j--) 
 			{
 				for (var i:int = allPlayers[j].granades.length-1; i >= 0; i--) 
