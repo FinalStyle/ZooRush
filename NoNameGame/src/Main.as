@@ -556,12 +556,12 @@ package
 				
 				for (var i:int = 0; i < allPlatformsOfLevel1.length; i++) 
 				{
-					if(allPlayers[k].model.MC_botHitBox.hitTestObject(allPlatformsOfLevel1[i])&&allPlayers[k].framecontador>=6)
+					if(allPlayers[k].model.MC_botHitBox.hitTestObject(allPlatformsOfLevel1[i])&&allPlayers[k].framecontador>=6&&allPlayers[k].fallSpeed>0)
 					{
 						allPlayers[k].fallSpeed=0;
 						allPlayers[k].model.y=allPlatformsOfLevel1[i].y-allPlatformsOfLevel1[i].height;
 						allPlayers[k].JumpContador=0;
-						if (allPlayers[k].isjumping)
+						if (allPlayers[k].isjumping&&!allPlayers[k].block)
 						{
 							allPlayers[k].model.MC_model.gotoAndPlay("Idle");
 						}

@@ -1,11 +1,11 @@
 package
 {
+	import Engine.Locator;
+	
 	import flash.display.MovieClip;
 	import flash.events.Event;
 	import flash.events.KeyboardEvent;
 	import flash.geom.Point;
-	
-	import Engine.Locator;
 	
 	public class Hero
 	{
@@ -38,6 +38,7 @@ package
 		public var atk1Key:int;
 		public var isjumping:Boolean=false;
 		public var runtrigger:Boolean;
+		public var block:Boolean=false;
 		/////////////////////////
 		/** Variable para controlar si puede moverse o no */
 		public var canmove:Boolean = true;
@@ -51,7 +52,7 @@ package
 		public var pointingArrow:pointArrow;
 		/** Holding se utiliza para que la funcion del eventlistener de teclado no se repita cuando se mantiene apretado */
 		public var holding:Boolean=false;
-		public var segundero:int=2;
+		public var damagecounter:int;
 		public var framecontador:int=60;
 		public var throwingGranade:Boolean;
 		///////////////////////////////////////////////////////////////////////
@@ -75,7 +76,11 @@ package
 		public function Update():void
 		{
 			framecontador++;
-			
+			if (block&&framecontador==damagecounter)
+			{
+				block=false;
+				model.MC_model.gotoAndPlay("Idle");
+			}
 			checkKeys();
 			fall();
 			moveBullets();
@@ -106,9 +111,10 @@ package
 				
 				
 			}
-			else if(fallSpeed<0)
+			else if(fallSpeed<0&&!block)
 			{
 				model.MC_model.gotoAndPlay("Jump_Idle");
+			
 				
 			}
 			else
@@ -119,11 +125,15 @@ package
 		}
 		public function shoot():void
 		{
-			var bulletModel:MovieClip = Locator.assetsManager.getMovieClip("MCBullet");
+			if (Main.instance.pauseboolean==false)
+			{
+					var bulletModel:MovieClip = Locator.assetsManager.getMovieClip("MCBullet");
 			Locator.mainStage.addChild(bulletModel);
 			bulletModel.x = model.x+20
 			bulletModel.y = model.y-model.height/2+bulletModel.height/2
 			bullet.push(bulletModel);
+			}
+		
 		}
 		public function moveBullets():void
 		{
@@ -175,10 +185,14 @@ package
 		///////////////////////////////////////////Granade and Arrow Functions///////////////////////////////////////////////
 		public function throwGranade():void
 		{
-			var granade:Granade;
-			granade = new Granade(model.x, model.y-10, currentlvl, pointingArrow.model.rotation, model.scaleX)
-			granades.push(granade);
-			throwingGranade=false;
+			if (Main.instance.pauseboolean==false)
+			{
+				var granade:Granade;
+				granade = new Granade(model.x, model.y-10, currentlvl, pointingArrow.model.rotation, model.scaleX)
+				granades.push(granade);
+				throwingGranade=false;
+			}
+			
 		}
 		public function arrowForThrowingGranade():void
 		{
@@ -209,8 +223,13 @@ package
 		}
 		public function flyByGranadeHit(direction:Point, force:int):void
 		{
+			block=true;
 			model.x += direction.x * force;
 			model.y += direction.y * force;
+			model.MC_model.gotoAndPlay("Damage");
+			damagecounter=framecontador;
+			damagecounter+=10
+			
 		}
 		///////////////////////////////////////////////////////////////////////////////////////////////////////
 		public function destroy():void
@@ -318,35 +337,52 @@ package
 			{
 				case upKey:
 				{
-					doublePressingRightDown=false;
-					doublePressingRightUp=false;
-					up=true;
+					if (!block)
+					{
+						doublePressingRightDown=false;
+						doublePressingRightUp=false;
+						up=true;
+					}
+					
 					break;
 				}
 				case downKey:
 				{
-					doublePressingRightDown=false;
-					doublePressingRightUp=false;
-					down=true;
+					if (!block)
+					{
+						doublePressingRightDown=false;
+						doublePressingRightUp=false;
+						down=true;
+					}
+					
 					break;
 				}
 				case leftKey:
 				{
-					doublePressingRightDown=false;
-					doublePressingRightUp=false;
-					left=true;
+					if (!block)
+					{
+						doublePressingRightDown=false;
+						doublePressingRightUp=false;
+						left=true;
+					}
+					
 					break;
 				}
 				case rightKey:
 				{
-					doublePressingRightDown=false;
-					doublePressingRightUp=false;
-					right=true;
+					if (!block)
+					{
+						doublePressingRightDown=false;
+						doublePressingRightUp=false;
+						right=true;
+					}
+					
 					break;
 				}
 				case shootKey:
 				{
-					if(!throwingGranade)
+			
+					if(!throwingGranade&&!block)
 					{
 						shoot();
 						break;
@@ -354,14 +390,20 @@ package
 				}
 				case atk1Key:
 				{
-					if(!holding)
+					if(!holding&&Main.instance.pauseboolean==false&&!block)
 					{
 						trace("1")
-						holding=true;
-						arrowForThrowingGranade();
-						throwingGranade=true;
+						
+						
+							holding=true;
+							arrowForThrowingGranade();
+							throwingGranade=true;
+						
+						
+						
+						
 					}
-					else
+					else if (Main.instance.pauseboolean==false&&!block)
 					{
 						trace("2")
 						throwGranade();
