@@ -1,12 +1,11 @@
 package
 {
-	import Engine.Locator;
-	
 	import flash.display.MovieClip;
 	import flash.events.Event;
 	import flash.events.KeyboardEvent;
 	import flash.geom.Point;
-	import flash.ui.Keyboard;
+	
+	import Engine.Locator;
 	
 	public class Hero
 	{
@@ -28,6 +27,8 @@ package
 		public var space:Boolean;
 		public var atk1:Boolean;
 		public var moviendoce:Boolean;
+		public var doublePressingRightDown:Boolean;
+		public var doublePressingRightUp:Boolean;
 		/////////////////////////
 		public var upKey:int;
 		public var downKey:int;
@@ -52,6 +53,7 @@ package
 		public var holding:Boolean=false;
 		public var segundero:int=2;
 		public var framecontador:int=60;
+		public var throwingGranade:Boolean;
 		///////////////////////////////////////////////////////////////////////
 		public var gotHitByGranade:Boolean=false;
 		public var directionToFlyByGranade:Point = new Point;
@@ -100,14 +102,14 @@ package
 			{
 				model.y += fallSpeed;
 				fallSpeed+=grav;
-			
+				
 				
 				
 			}
 			else if(fallSpeed<0)
 			{
 				model.MC_model.gotoAndPlay("Jump_Idle");
-			
+				
 			}
 			else
 			{
@@ -156,17 +158,16 @@ package
 				}
 				model.x+=speed*direction;
 				moviendoce=true;
-				/*if (isjumping)
-				{
-					model.MC_model.rotation+=12*direction;
-				}*/
+				
 			}
 			model.scaleX=1*direction;
 			canmove=true;
 			if (runtrigger!=isjumping&&isjumping==false)
 			{
-				trace ("triggeeeeeeer")
+				
 				model.MC_model.gotoAndPlay("Run");
+				
+				
 			}
 			runtrigger=isjumping;
 		}
@@ -175,8 +176,9 @@ package
 		public function throwGranade():void
 		{
 			var granade:Granade;
-			granade = new Granade(model.x, model.y-10, currentlvl, pointingArrow.rotation, model.scaleX)
+			granade = new Granade(model.x, model.y-10, currentlvl, pointingArrow.model.rotation, model.scaleX)
 			granades.push(granade);
+			throwingGranade=false;
 		}
 		public function arrowForThrowingGranade():void
 		{
@@ -213,6 +215,15 @@ package
 		///////////////////////////////////////////////////////////////////////////////////////////////////////
 		public function destroy():void
 		{
+			for (var i:int = 0; i < granades.length; i++) 
+			{
+				granades[i].destroy(currentlvl)
+				granades.splice(i, 1);
+			}
+			if(holding)
+			{
+				pointingArrow.destroy(currentlvl);
+			}
 			currentlvl.removeChild(model);	
 			Locator.mainStage.removeEventListener(KeyboardEvent.KEY_DOWN, keyDown)
 			Locator.mainStage.removeEventListener(KeyboardEvent.KEY_UP, keyUp)		
@@ -225,7 +236,7 @@ package
 				Locator.mainStage.removeEventListener(KeyboardEvent.KEY_DOWN, keyDown)
 				Locator.mainStage.removeEventListener(KeyboardEvent.KEY_UP, keyUp)	
 			}
-			
+				
 			else
 			{
 				Locator.mainStage.addEventListener(KeyboardEvent.KEY_DOWN, keyDown)
@@ -235,29 +246,107 @@ package
 		
 		public function checkKeys():void
 		{
-			if (up&&canJump&&JumpContador<2) 
+			
+			if(!throwingGranade)
 			{
-				fallSpeed=-18;
-				canJump = false;
-				JumpContador++
+				
+				
+				if (up&&canJump&&JumpContador<2) 
+				{
+					fallSpeed=-18;
+					canJump = false;
+					JumpContador++;
 					model.MC_model.gotoAndPlay("Jump_Start");
-				isjumping=true;
+					isjumping=true;
+				}
+				if (down&&canmove) 
+				{
+					framecontador=0;
+				}
+				if (left) 
+				{
+					move(-1)
+				}
+				if (right) 
+				{
+					move(1)
+				}
 			}
-			if (down&&canmove) 
+			else
 			{
-				framecontador=0;
+				
+				if(doublePressingRightDown)
+				{
+					pointingArrow.model.rotation=45;
+				}
+				if(doublePressingRightUp)
+				{
+					pointingArrow.model.rotation=-45;
+				}
+				if (up && !doublePressingRightDown && !doublePressingRightUp)
+				{
+					pointingArrow.model.rotation=-90;
+					if(doublePressingRightDown)
+					{
+						doublePressingRightDown=false;
+					}
+					else if(doublePressingRightUp)
+					{
+						doublePressingRightUp=false;
+					}
+						
+					else if (down) 
+					{
+						pointingArrow.model.rotation=90;
+						if(doublePressingRightDown)
+						{
+							doublePressingRightDown=false;
+						}
+						else if(doublePressingRightUp)
+						{
+							doublePressingRightUp=false;
+						}
+					}
+					else if (left) 
+					{
+						pointingArrow.model.rotation=180;
+						if(doublePressingRightDown)
+						{
+							doublePressingRightDown=false;
+						}
+						else if(doublePressingRightUp)
+						{
+							doublePressingRightUp=false;
+						}
+					}
+					else if (right) 
+					{
+						pointingArrow.model.rotation=0;
+						if(doublePressingRightDown)
+						{
+							doublePressingRightDown=false;
+						}
+						else if(doublePressingRightUp)
+						{
+							doublePressingRightUp=false;
+						}
+					}
+				}
 			}
-			if (left) 
+			if(right && up)
 			{
-				move(-1)
+				doublePressingRightUp=true;
+				doublePressingRightDown=false;
 			}
-			if (right) 
+			if(right && down)
 			{
-				move(1)
+				doublePressingRightDown=true;
+				doublePressingRightUp=false;
 			}
 		}
 		protected function keyDown(e:KeyboardEvent):void
 		{
+			
 			switch(e.keyCode)
 			{
 				case upKey:
@@ -272,6 +361,7 @@ package
 				}
 				case leftKey:
 				{
+					
 					left=true;
 					break;
 				}
@@ -282,15 +372,27 @@ package
 				}
 				case shootKey:
 				{
-					shoot();
-					break;
+					if(!throwingGranade)
+					{
+						shoot();
+						break;
+					}
 				}
 				case atk1Key:
 				{
 					if(!holding)
 					{
+						trace("1")
 						holding=true;
 						arrowForThrowingGranade();
+						throwingGranade=true;
+					}
+					else
+					{
+						trace("2")
+						throwGranade();
+						deleteArrowForThrowingGranade();
+						holding=false;
 					}
 					break;
 				}
@@ -331,13 +433,6 @@ package
 						model.MC_model.gotoAndPlay("Idle");
 					}
 					
-					break;
-				}
-				case atk1Key:
-				{
-					throwGranade();
-					deleteArrowForThrowingGranade();
-					holding=false;
 					break;
 				}
 			}

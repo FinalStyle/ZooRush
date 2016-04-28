@@ -20,27 +20,22 @@ package
 		}
 		public function update(posX:int, posY:int, scaleX:int):void
 		{
-			if(model.rotation>=50)
+			/*if(model.rotation>=50)
 			{
 				direction = -1;
 			}
 			else if(model.rotation<=-50)
 			{
 				direction = 1;
-			}
+			}*/
 			model.scaleX=scaleX;
 			model.x = posX;
 			model.y = posY;
-			model.rotation += speed * direction
+		/*model.rotation += speed * direction*/		
 		}
 		public function destroy(parent:MovieClip):void
 		{
 			parent.removeChild(model)
-		}
-		public function get rotation():Number
-		{
-		
-			return model.rotation
 		}
 	}
 }

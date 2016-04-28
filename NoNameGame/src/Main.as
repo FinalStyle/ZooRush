@@ -1,28 +1,22 @@
 package
 {
-	import Characters.RedPanda;
-	
-	import Engine.Locator;
-	
 	import flash.display.MovieClip;
-	import flash.display.Sprite;
-	import flash.display.Stage;
 	import flash.events.Event;
 	import flash.events.KeyboardEvent;
 	import flash.events.MouseEvent;
 	import flash.geom.Point;
 	import flash.media.Sound;
-	import flash.sampler.NewObjectSample;
-	import flash.text.engine.Kerning;
 	import flash.ui.Keyboard;
-	import flash.ui.Mouse;
 	
-	import flashx.textLayout.formats.BackgroundColor;
-	import flashx.textLayout.operations.MoveChildrenOperation;
+	import Characters.RedPanda;
+	
+	import Engine.Locator;
 	
 	[SWF(height="720", width="1280", frameRate="60")]
 	public class Main extends Locator
-	{		
+	{
+		public static var instance:Main;
+		
 		public var player:Hero;
 		public var player2:Hero;
 		public var player3:Hero;
@@ -61,7 +55,7 @@ package
 		public var cannon1:Cannon;
 		public var cannon2:Cannon;
 		public var allCannons:Vector.<Cannon>;
-	
+		
 		
 		
 		
@@ -69,9 +63,17 @@ package
 		
 		public function Main()
 		{
+			instance = this;
+			
+			mainfunction();
+			
+		}
+		
+		public function mainfunction():void
+			
+		{
 			Locator.assetsManager.loadLinks("linksleveltry.txt");
 			Locator.assetsManager.addEventListener(Event.COMPLETE, evMainMenu);
-			
 		}
 		
 		public function evMainMenu(event:Event):void
@@ -84,11 +86,9 @@ package
 			w=true;
 			Locator.mainStage.addEventListener(KeyboardEvent.KEY_DOWN, keyDown)
 			
-			var song:Sound=	Locator.assetsManager.getSound("song1");
-			audio = new SoundController(song);
-			audio.play(0)
-			audio.volume=0.1;
+			
 		}
+		
 		
 		
 		
@@ -128,6 +128,24 @@ package
 					w=false;
 					break;
 				}
+					
+				case Keyboard.CONTROL:
+				{
+					if (gamestarted)
+					{
+						if (!pauseboolean)
+						{
+							pause.pauseon(camLookAt.x, camLookAt.y/2);
+							
+						}
+						else if (pauseboolean)
+						{
+							pause.pausedoff();
+							
+						}
+					}
+					break;
+				}
 				case Keyboard.ENTER:
 				{
 					if (w==true&&Locator.mainStage.contains(menu1))
@@ -164,27 +182,18 @@ package
 						evStartGame("MCLevel1");
 						gamestarted=true;
 					}
-					else if (gamestarted)
-					{
-						if (!pauseboolean)
-						{
-						pause.pauseon(camLookAt.x, camLookAt.y/2);
-						pauseboolean=true;
-						}
-						else
-						{
-							pause.pausedoff();
-							pauseboolean=false;
-						}
-					}
-					break;
+					
 				}
 			}
 			
 		}
 		public function evStartGame(level:String):void
 		{
-			
+			var song:Sound=	Locator.assetsManager.getSound("song1");
+			audio = new SoundController(song);
+			audio.play(0)
+			audio.volume=0.1;
+			pause.getlevel(level);
 			allPlatformsOfLevel1 = new Array();
 			allWallsOfLevel1= new Array();
 			
@@ -246,14 +255,9 @@ package
 			
 			
 			//*********************************Cannon Set*******************************//
-			allCannons= new Vector.<Cannon>;
-			cannon1 = new Cannon;
-			cannon2 = new Cannon;
-			cannon1.spawn(2*stage.stageWidth/5, 0, this.level);
-			cannon2.spawn(4*stage.stageWidth/5, 0, this.level);
 			
-			allCannons.push(cannon1);
-			allCannons.push(cannon2);
+			
+			
 			
 			Locator.mainStage.addEventListener(Event.ENTER_FRAME, update)
 			Locator.mainStage.addEventListener(MouseEvent.CLICK, offCamera);
@@ -283,61 +287,63 @@ package
 		///////////////////////////////////////////////////////////////////////////////
 		public function update(e:Event):void
 		{	
+			
 			if (!pauseboolean)
 			{
-			for (var i:int = 0; i < allPlayers.length; i++) 
-			{
-				allPlayers[i].Update();
+				for (var i:int = 0; i < allPlayers.length; i++) 
+				{
+					allPlayers[i].Update();
+					
+				}
+				cam.lookAt(camLookAt)
+				if(!gameEnded)
+				{
+					checkDeaths();
+					/////////////////actualizo posiciones guardadas////////////////////
+					updatePlayerGlobalAndLocalPositions();
+					GetNearestPlayersToSides();
+					GetNearestPlayersToSidesLocal();
+					checkCamera();
+					///////////////////////////Collitions//////////////////////////////
+					granadeCollitions()
+					if(cam.zoom>=1.4 || cam.zoom<=0.3)
+					{
+						canZoomIn=false
+					}
+				}
+				//trace(cam.zoom)
+				//*****checkPlayersColitions esta fuera del if porque necesito seguir comprobando colisiones del jugador que gana*****//
+				checkPlayersColitions();
 				
-			}
-			cam.lookAt(camLookAt)
-			if(!gameEnded)
-			{
-				/////////////////actualizo posiciones guardadas////////////////////
-				updatePlayerGlobalAndLocalPositions();
-				GetNearestPlayersToSides();
-				GetNearestPlayersToSidesLocal();
-				checkCamera();
-				///////////////////////////Collitions//////////////////////////////
-				granadeCollitions()
-				if(cam.zoom>=1.4 || cam.zoom<=0.3)
+				if(allPlayers.length==1)
 				{
-					canZoomIn=false
+					gameEnded=true;
+					if(camLookAt.x>allPlayers[0].model.x+5)
+					{
+						camLookAt.x-=3;
+						zoomIn();
+					}
+					else if(camLookAt.x<allPlayers[0].model.x-5)
+					{
+						camLookAt.x+=3;
+						zoomIn();
+					}
+					if(camLookAt.y>allPlayers[0].model.y+5)
+					{
+						camLookAt.y-=3;
+					}
+					else if(camLookAt.y<allPlayers[0].model.y-5)
+					{
+						camLookAt.y+=3;
+					}
 				}
-			}
-			//trace(cam.zoom)
-			//*****checkPlayersColitions esta fuera del if porque necesito seguir comprobando colisiones del jugador que gana*****//
-			checkPlayersColitions();
-			
-			if(allPlayers.length==1)
-			{
-				gameEnded=true;
-				if(camLookAt.x>allPlayers[0].model.x+5)
+				/*else
 				{
-					camLookAt.x-=3;
-					zoomIn();
-				}
-				else if(camLookAt.x<allPlayers[0].model.x-5)
+				for (var j:int = 0; j < allCannons.length; j++) 
 				{
-					camLookAt.x+=3;
-					zoomIn();
+				allCannons[j].update(GetNearestPlayerToCannon(allCannons[j].model));
 				}
-				if(camLookAt.y>allPlayers[0].model.y+5)
-				{
-					camLookAt.y-=3;
-				}
-				else if(camLookAt.y<allPlayers[0].model.y-5)
-				{
-					camLookAt.y+=3;
-				}
-			}
-			/*else
-			{
-			for (var j:int = 0; j < allCannons.length; j++) 
-			{
-			allCannons[j].update(GetNearestPlayerToCannon(allCannons[j].model));
-			}
-			}*/
+				}*/
 			}
 		}
 		
@@ -534,20 +540,13 @@ package
 		{
 			for (var k:int = allPlayers.length-1; k >= 0; k--) 
 			{
-				for (var i:int = 0; i < allCannons.length; i++) 
+				if (allPlayers[k].model.MC_botHitBox.hitTestObject(deadline))
 				{
-					if(allPlayers[k].model.MC_botHitBox.hitTestObject(allCannons[i].missileModel))
-					{
-						allPlayers[k].destroy();
-						allPlayers.splice(k, 1);
-					}
-					else if (allPlayers[k].model.MC_botHitBox.hitTestObject(deadline))
-					{
-						allPlayers[k].destroy();
-						allPlayers.splice(k, 1);
-						trace("se murio viteh")
-					}
+					allPlayers[k].destroy();
+					allPlayers.splice(k, 1);
+					trace("se murio viteh")
 				}
+				
 			}
 		}
 		public function checkPlayersColitions():void
@@ -562,8 +561,13 @@ package
 						allPlayers[k].fallSpeed=0;
 						allPlayers[k].model.y=allPlatformsOfLevel1[i].y-allPlatformsOfLevel1[i].height;
 						allPlayers[k].JumpContador=0;
+						if (allPlayers[k].isjumping)
+						{
+							allPlayers[k].model.MC_model.gotoAndPlay("Idle");
+						}
 						allPlayers[k].isjumping=false;
 						allPlayers[k].model.MC_model.rotation=allPlayers[k].rotacionoriginal;
+						
 					}				
 				}
 				for (var j:int = 0; j < allWallsOfLevel1.length; j++) 
@@ -621,7 +625,7 @@ package
 							allPlayers[j].granades[i].speed=allPlayers[j].granades[i].speed/1.5;
 							trace("colisiona")
 							
-
+							
 						}      
 					}
 					for (var k:int= allPlayers.length-1; k >= 0; k--) 
@@ -665,6 +669,30 @@ package
 					} 
 				}
 			}
+		}
+		
+		public function destroyall():void
+		{
+			for (var k:int = 0; k < allPlatformsOfLevel1.length; k++) 
+			{
+				allPlatformsOfLevel1.splice(k,1);
+			}
+			
+			for (var j:int = 0; j < allWallsOfLevel1.length; j++) 
+			{
+				allWallsOfLevel1.splice(j,1);
+			}
+			for (var i:int = allPlayers.length-1; i >= 0; i--) 
+			{
+				allPlayers[i].destroy();
+				allPlayers.splice(i,1);
+			}
+			cam.off();
+			cam=new Camera
+			Locator.mainStage.removeEventListener(Event.ENTER_FRAME, update)
+			Locator.mainStage.removeEventListener(MouseEvent.CLICK, offCamera);
+			audio.stop();
+			
 		}
 	}
 }

@@ -19,6 +19,11 @@ package Engine
 			assetsManager = new AssetsManager();
 			trace("*** Engine Inicializado ***");
 		}
+		public static function resetassets(): void
+		{
+			console = new Console();
+			assetsManager = new AssetsManager();
+		}
 		
 	}
 }
