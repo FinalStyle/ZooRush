@@ -578,9 +578,7 @@ package
 						
 					}
 				}
-				
 			}
-			
 		}
 		public function allPlatformsToArrayLevel1():void
 		{
@@ -608,8 +606,6 @@ package
 		
 		public function granadeCollitions():void
 		{
-			
-			
 			for (var j:int = allPlayers.length-1; j >= 0; j--) 
 			{
 				for (var i:int = allPlayers[j].granades.length-1; i >= 0; i--) 
@@ -643,10 +639,8 @@ package
 							
 							direction.x = Math.cos(radians);
 							direction.y = Math.sin(radians);
-							//trace(direction)
 							allPlayers[k].gotHitByGranade=true;
 							allPlayers[k].directionToFlyByGranade=direction;
-							//allPlayers[j].granades[i].currentColdownToApplyForceOnPlayer=allPlayers[j].granades[i].coldownToApplyForceOnPlayer;
 							allPlayers[j].granades[i].destroy(level);
 							allPlayers[j].granades.splice(i, 1);
 							break;
@@ -692,7 +686,6 @@ package
 			Locator.mainStage.removeEventListener(Event.ENTER_FRAME, update)
 			Locator.mainStage.removeEventListener(MouseEvent.CLICK, offCamera);
 			audio.stop();
-			
 		}
 	}
 }

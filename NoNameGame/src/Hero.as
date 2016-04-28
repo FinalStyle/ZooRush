@@ -274,74 +274,41 @@ package
 			}
 			else
 			{
-				
-				if(doublePressingRightDown)
-				{
-					pointingArrow.model.rotation=45;
-				}
-				if(doublePressingRightUp)
+				if(up && right)
 				{
 					pointingArrow.model.rotation=-45;
 				}
-				if (up && !doublePressingRightDown && !doublePressingRightUp)
+				else if(right && down)
 				{
-					pointingArrow.model.rotation=-90;
-					if(doublePressingRightDown)
+					pointingArrow.model.rotation=45;
+				}
+				else if(left && up)
+				{
+					pointingArrow.model.rotation=-135;
+				}
+				else if(left && down)
+				{
+					pointingArrow.model.rotation=135;
+				}
+				else
+				{
+					if(up)
 					{
-						doublePressingRightDown=false;
+						pointingArrow.model.rotation=-90;
 					}
-					else if(doublePressingRightUp)
-					{
-						doublePressingRightUp=false;
-					}
-						
-					else if (down) 
+					if(down) 
 					{
 						pointingArrow.model.rotation=90;
-						if(doublePressingRightDown)
-						{
-							doublePressingRightDown=false;
-						}
-						else if(doublePressingRightUp)
-						{
-							doublePressingRightUp=false;
-						}
 					}
-					else if (left) 
+					if(left) 
 					{
 						pointingArrow.model.rotation=180;
-						if(doublePressingRightDown)
-						{
-							doublePressingRightDown=false;
-						}
-						else if(doublePressingRightUp)
-						{
-							doublePressingRightUp=false;
-						}
 					}
-					else if (right) 
+					if(right) 
 					{
 						pointingArrow.model.rotation=0;
-						if(doublePressingRightDown)
-						{
-							doublePressingRightDown=false;
-						}
-						else if(doublePressingRightUp)
-						{
-							doublePressingRightUp=false;
-						}
 					}
 				}
-			}
-			if(right && up)
-			{
-				doublePressingRightUp=true;
-				doublePressingRightDown=false;
-			}
-			if(right && down)
-			{
-				doublePressingRightDown=true;
-				doublePressingRightUp=false;
 			}
 		}
 		protected function keyDown(e:KeyboardEvent):void
@@ -351,22 +318,29 @@ package
 			{
 				case upKey:
 				{
+					doublePressingRightDown=false;
+					doublePressingRightUp=false;
 					up=true;
 					break;
 				}
 				case downKey:
 				{
+					doublePressingRightDown=false;
+					doublePressingRightUp=false;
 					down=true;
 					break;
 				}
 				case leftKey:
 				{
-					
+					doublePressingRightDown=false;
+					doublePressingRightUp=false;
 					left=true;
 					break;
 				}
 				case rightKey:
 				{
+					doublePressingRightDown=false;
+					doublePressingRightUp=false;
 					right=true;
 					break;
 				}
