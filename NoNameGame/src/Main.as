@@ -88,8 +88,13 @@ package
 			menu1=Locator.assetsManager.getMovieClip("MC_Menu1");
 			menu2=Locator.assetsManager.getMovieClip("MC_Menu2");
 			creditos=Locator.assetsManager.getMovieClip("MC_Creditos");
-			Locator.mainStage.addChild(menu1)
-			menu1.MC_creditos.alpha=0
+			Locator.mainStage.addChild(menu1);
+			menu1.scaleX=1.3
+			menu1.scaleY=1.3
+			menu2.scaleX=1.3
+			menu2.scaleY=1.3
+				
+			menu1.MC_creditos.alpha=0;
 			w=true;
 			Locator.mainStage.addEventListener(KeyboardEvent.KEY_DOWN, keyDown)
 			
@@ -294,11 +299,6 @@ package
 			playersLocalPositionNearestToEdges= new Vector.<Point>;
 			
 			
-			//*********************************Cannon Set*******************************//
-			
-			
-			
-			
 			Locator.mainStage.addEventListener(Event.ENTER_FRAME, update)
 			Locator.mainStage.addEventListener(MouseEvent.CLICK, offCamera);
 			
@@ -351,8 +351,6 @@ package
 						canZoomIn=false
 					}
 				}
-				//trace(cam.zoom)
-				//*****checkPlayersColitions esta fuera del if porque necesito seguir comprobando colisiones del jugador que gana*****//
 				checkPlayersColitions();
 				
 				if(allPlayers.length==1)
@@ -378,13 +376,6 @@ package
 						camLookAt.y+=3;
 					}
 				}
-				/*else
-				{
-				for (var j:int = 0; j < allCannons.length; j++) 
-				{
-				allCannons[j].update(GetNearestPlayerToCannon(allCannons[j].model));
-				}
-				}*/
 			}
 		}
 		public function victorysound():void
@@ -462,7 +453,6 @@ package
 					highestValues.y=playersLocalPositions[i].y;
 				}
 			}
-			//trace("Low", lowestValues, "High", highestValues)
 			tempPlayer.push(lowestValues);
 			tempPlayer.push(highestValues);
 			playersLocalPositionNearestToEdges=tempPlayer;
@@ -493,7 +483,6 @@ package
 					highestValues.y=playersGlobalPositions[i].y;
 				}
 			}
-			//trace("Low", lowestValues, "High", highestValues)
 			tempPlayer.push(lowestValues);
 			tempPlayer.push(highestValues);
 			playersGlobalPositionNearestToEdges=tempPlayer;
@@ -522,7 +511,6 @@ package
 				tempPGlobal = allPlayers[i].model.parent.localToGlobal(tempPLocal);
 				playersLocalPositions[i]=tempPLocal;
 				playersGlobalPositions[i]=tempPGlobal;
-				//trace("Local", playersLocalPositions[i], "Global", playersGlobalPositions[i])
 			}
 			
 		}
@@ -555,37 +543,6 @@ package
 			{
 				zoomOut()
 			}
-			
-			/*if(camLookAt.x>mid2Players.x+10)
-			{
-			camLookAt.x-=5;
-			}
-			else if(camLookAt.x<mid2Players.x-10)
-			{
-			camLookAt.x+=5;
-			}
-			if(camLookAt.y>mid2Players.y+10)
-			{
-			camLookAt.y-=5;
-			}
-			else if(camLookAt.y<mid2Players.y-10)
-			{
-			camLookAt.y+=5;
-			}*/
-			/*
-			if(playersLastLocalsPositions[i].x<playersLocalPositions[i].x && allPlayers[i].model.x - allPlayers[aquienresto].model.x<0 && canZoom)
-			{
-			//trace("playerlastlocal- " + playersLastLocalsPositions[i].x, "currentlocal- ",  playersLocalPositions[i].x, " i: ", i);
-			zoomIn()
-			canZoom=true
-			}
-			else if(playersLastLocalsPositions[i].x>playersLocalPositions[i].x && allPlayers[i].model.x - allPlayers[aquienresto].model.x>0 && canZoom)
-			{
-			//trace("playerlastlocal- " + playersLastLocalsPositions[i].x, "currentlocal- ",  playersLocalPositions[i].x, " i: ", i);
-			zoomIn()
-			canZoom=true
-			}
-			}	*/
 		}
 		
 		//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
