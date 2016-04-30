@@ -58,10 +58,6 @@ package
 		public var aceptarsounds:Sound;
 		public var jumpsound:Sound;
 		public var bool:Boolean;
-		//////////////////////////////////////////Cannon///////////////////////////////////////////////
-		public var cannon1:Cannon;
-		public var cannon2:Cannon;
-		public var allCannons:Vector.<Cannon>;
 	
 		
 		
@@ -706,20 +702,6 @@ package
 						}    
 					}
 					
-				}
-			}
-		}
-		public function missileCollitions():void
-		{
-			for (var i:int = 0; i < allCannons.length; i++) 
-			{
-				for (var k:int = 0; k < allPlatformsOfLevel1.length; k++) 
-				{
-					if(allCannons[i].missileModel.hitTestObject(allPlatformsOfLevel1[k]))
-					{
-						allCannons[i].destroyMissile();
-						allCannons[i].shot=false;
-					} 
 				}
 			}
 		}
