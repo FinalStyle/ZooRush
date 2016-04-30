@@ -278,6 +278,10 @@ package
 						JumpContador++;
 						model.MC_model.gotoAndPlay("Jump_Start");
 						isjumping=true;
+						Main.instance.audioselection = new SoundController(Main.instance.jumpsound);
+						
+						Main.instance.audioselection.play(0);
+						Main.instance.audioselection.volume=0.1;
 					}
 					if (down&&canmove) 
 					{

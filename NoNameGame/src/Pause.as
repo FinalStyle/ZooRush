@@ -36,6 +36,7 @@ package
 						optionnumber--
 						Main.instance.audioselection = new SoundController(Main.instance.selectionsound);
 						Main.instance.audioselection.play(0);
+						Main.instance.audioselection.volume=0.3;
 					}
 					
 					break;
@@ -48,6 +49,7 @@ package
 						optionnumber++
 						Main.instance.audioselection = new SoundController(Main.instance.selectionsound);
 						Main.instance.audioselection.play(0);
+						Main.instance.audioselection.volume=0.3;
 					}
 					break;
 				
@@ -58,6 +60,7 @@ package
 						pausedoff()
 						Main.instance.audioselection = new SoundController(Main.instance.aceptarsounds);
 						Main.instance.audioselection.play(0);
+						Main.instance.audioselection.volume=0.4;
 					}
 					else if(optionnumber==2)
 					{
@@ -67,6 +70,7 @@ package
 						Main.instance.evStartGame(currentlevel)
 						Main.instance.audioselection = new SoundController(Main.instance.aceptarsounds);
 						Main.instance.audioselection.play(0);
+						Main.instance.audioselection.volume=0.4;
 					}
 					else
 					{
@@ -76,6 +80,7 @@ package
 						Main.instance.mainfunction();
 						Main.instance.audioselection = new SoundController(Main.instance.aceptarsounds);
 						Main.instance.audioselection.play(0);
+						Main.instance.audioselection.volume=0.4;
 					}
 					
 					break;

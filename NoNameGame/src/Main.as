@@ -52,14 +52,17 @@ package
 		/////////////////////////////////////////Audio//////////////////////////////////////////////////
 		public var audio:SoundController;
 		public var audioselection:SoundController;
+		public var audiovictory:SoundController;
+		public var selectionsound:Sound;
+		public var backsound:Sound;
+		public var aceptarsounds:Sound;
+		public var jumpsound:Sound;
+		public var bool:Boolean;
 		//////////////////////////////////////////Cannon///////////////////////////////////////////////
 		public var cannon1:Cannon;
 		public var cannon2:Cannon;
 		public var allCannons:Vector.<Cannon>;
-		public var selectionsound:Sound;
-		public var backsound:Sound;
-		public var aceptarsounds:Sound;
-		
+	
 		
 		
 		
@@ -85,6 +88,7 @@ package
 			selectionsound=Locator.assetsManager.getSound("soundchangeselection");
 			backsound=Locator.assetsManager.getSound("soundselectionatras");
 			aceptarsounds=Locator.assetsManager.getSound("soundselectionaceptar");
+			jumpsound=Locator.assetsManager.getSound("jumpsound");
 			menu1=Locator.assetsManager.getMovieClip("MC_Menu1");
 			menu2=Locator.assetsManager.getMovieClip("MC_Menu2");
 			creditos=Locator.assetsManager.getMovieClip("MC_Creditos");
@@ -112,6 +116,7 @@ package
 						
 						audioselection = new SoundController(selectionsound);
 						audioselection.play(0);
+						audioselection.volume=0.3;
 					}
 					else if (Locator.mainStage.contains(menu2))
 					{
@@ -120,6 +125,7 @@ package
 						
 						audioselection = new SoundController(selectionsound);
 						audioselection.play(0);
+						audioselection.volume=0.3;
 					}
 					w=true;
 					s=false;
@@ -134,6 +140,7 @@ package
 						
 						audioselection = new SoundController(selectionsound);
 						audioselection.play(0);
+						audioselection.volume=0.3;
 					}
 					else if (Locator.mainStage.contains(menu2))
 					{
@@ -142,6 +149,7 @@ package
 						
 						audioselection = new SoundController(selectionsound);
 						audioselection.play(0);
+						audioselection.volume=0.3;
 					}
 					s=true;
 					w=false;
@@ -176,6 +184,7 @@ package
 						w=true;
 						audioselection = new SoundController(aceptarsounds);
 						audioselection.play(0);
+						audioselection.volume=0.4;
 						
 						
 					}
@@ -185,6 +194,7 @@ package
 						Locator.mainStage.addChild(creditos);
 						audioselection = new SoundController(aceptarsounds);
 						audioselection.play(0);
+						audioselection.volume=0.4;
 					}
 					else if (Locator.mainStage.contains(creditos))
 					{
@@ -195,6 +205,7 @@ package
 						w=true;
 						audioselection = new SoundController(aceptarsounds);
 						audioselection.play(0);
+						audioselection.volume=0.4;
 					}
 					else if (w==false&&Locator.mainStage.contains(menu2))
 					{
@@ -203,6 +214,8 @@ package
 						gamestarted=true;
 						audioselection = new SoundController(aceptarsounds);
 						audioselection.play(0);
+						audioselection.volume=0.4;
+					
 					}
 					else if (w==true&&Locator.mainStage.contains(menu2))
 					{
@@ -211,6 +224,7 @@ package
 						gamestarted=true;
 						audioselection = new SoundController(aceptarsounds);
 						audioselection.play(0);
+						audioselection.volume=0.4;
 					}
 					
 				}
@@ -221,8 +235,8 @@ package
 		{
 			var song:Sound=	Locator.assetsManager.getSound("song1");
 			audio = new SoundController(song);
-			audio.play(0)
-			audio.volume=0.1;
+			audio.play(11)
+			audio.volume=0.2;
 			pause.getlevel(level);
 			allPlatformsOfLevel1 = new Array();
 			allWallsOfLevel1= new Array();
@@ -347,6 +361,7 @@ package
 				
 				if(allPlayers.length==1)
 				{
+					victorysound();
 					gameEnded=true;
 					if(camLookAt.x>allPlayers[0].model.x+5)
 					{
@@ -376,7 +391,21 @@ package
 				}*/
 			}
 		}
-		
+		public function victorysound():void
+		{
+			if (!bool)
+			{
+				var yeah:Sound=Locator.assetsManager.getSound("yeahsound")
+				var horn:Sound=Locator.assetsManager.getSound("victoryhorn")
+				audioselection = new SoundController(yeah);
+				audiovictory = new SoundController(horn);
+				audiovictory.play(0);
+				audiovictory.volume=0.3;
+				audioselection.play(0);
+				audioselection.volume=0.3;
+				bool=true
+			}
+		}
 		public function GetNearestPlayerToCannon(cannon:MovieClip):Point 
 		{
 			var pLocal:Point = new Point(0, 0);
