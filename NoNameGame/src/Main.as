@@ -399,7 +399,7 @@ package
 				var horn:Sound=Locator.assetsManager.getSound("victoryhorn")
 				audioselection = new SoundController(yeah);
 				audiovictory = new SoundController(horn);
-				audiovictory.play(0);
+				audiovictory.play(2);
 				audiovictory.volume=0.3;
 				audioselection.play(0);
 				audioselection.volume=0.3;
