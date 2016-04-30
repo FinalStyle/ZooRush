@@ -265,70 +265,73 @@ package
 		
 		public function checkKeys():void
 		{
-			
-			if(!throwingGranade)
+			if (!block)
 			{
-				
-				
-				if (up&&canJump&&JumpContador<2) 
+				if(!throwingGranade)
 				{
-					fallSpeed=-18;
-					canJump = false;
-					JumpContador++;
-					model.MC_model.gotoAndPlay("Jump_Start");
-					isjumping=true;
-				}
-				if (down&&canmove) 
-				{
-					framecontador=0;
-				}
-				if (left) 
-				{
-					move(-1)
-				}
-				if (right) 
-				{
-					move(1)
-				}
-			}
-			else
-			{
-				if(up && right)
-				{
-					pointingArrow.model.rotation=-45;
-				}
-				else if(right && down)
-				{
-					pointingArrow.model.rotation=45;
-				}
-				else if(left && up)
-				{
-					pointingArrow.model.rotation=-135;
-				}
-				else if(left && down)
-				{
-					pointingArrow.model.rotation=135;
+					
+					
+					if (up&&canJump&&JumpContador<2) 
+					{
+						fallSpeed=-18;
+						canJump = false;
+						JumpContador++;
+						model.MC_model.gotoAndPlay("Jump_Start");
+						isjumping=true;
+					}
+					if (down&&canmove) 
+					{
+						framecontador=0;
+					}
+					if (left) 
+					{
+						move(-1)
+					}
+					if (right) 
+					{
+						move(1)
+					}
 				}
 				else
 				{
-					if(up)
+					if(up && right)
 					{
-						pointingArrow.model.rotation=-90;
+						pointingArrow.model.rotation=-45;
 					}
-					if(down) 
+					else if(right && down)
 					{
-						pointingArrow.model.rotation=90;
+						pointingArrow.model.rotation=45;
 					}
-					if(left) 
+					else if(left && up)
 					{
-						pointingArrow.model.rotation=180;
+						pointingArrow.model.rotation=-135;
 					}
-					if(right) 
+					else if(left && down)
 					{
-						pointingArrow.model.rotation=0;
+						pointingArrow.model.rotation=135;
+					}
+					else
+					{
+						if(up)
+						{
+							pointingArrow.model.rotation=-90;
+						}
+						if(down) 
+						{
+							pointingArrow.model.rotation=90;
+						}
+						if(left) 
+						{
+							pointingArrow.model.rotation=180;
+						}
+						if(right) 
+						{
+							pointingArrow.model.rotation=0;
+						}
 					}
 				}
 			}
+			
 		}
 		protected function keyDown(e:KeyboardEvent):void
 		{
@@ -337,56 +340,51 @@ package
 			{
 				case upKey:
 				{
-					if (!block)
-					{
+					
 						doublePressingRightDown=false;
 						doublePressingRightUp=false;
 						up=true;
-					}
+					
 					
 					break;
 				}
 				case downKey:
 				{
-					if (!block)
-					{
+					
 						doublePressingRightDown=false;
 						doublePressingRightUp=false;
 						down=true;
-					}
+					
 					
 					break;
 				}
 				case leftKey:
 				{
-					if (!block)
-					{
+					
 						doublePressingRightDown=false;
 						doublePressingRightUp=false;
 						left=true;
-					}
+					
 					
 					break;
 				}
 				case rightKey:
 				{
-					if (!block)
-					{
+					
 						doublePressingRightDown=false;
 						doublePressingRightUp=false;
 						right=true;
-					}
+					
 					
 					break;
 				}
 				case shootKey:
 				{
 			
-					if(!throwingGranade&&!block)
-					{
+					
 						shoot();
 						break;
-					}
+					
 				}
 				case atk1Key:
 				{
