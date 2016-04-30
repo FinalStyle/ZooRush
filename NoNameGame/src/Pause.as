@@ -34,6 +34,8 @@ package
 					if (optionnumber>1)
 					{
 						optionnumber--
+						Main.instance.audioselection = new SoundController(Main.instance.selectionsound);
+						Main.instance.audioselection.play(0);
 					}
 					
 					break;
@@ -44,6 +46,8 @@ package
 					if (optionnumber<3)
 					{
 						optionnumber++
+						Main.instance.audioselection = new SoundController(Main.instance.selectionsound);
+						Main.instance.audioselection.play(0);
 					}
 					break;
 				
@@ -52,6 +56,8 @@ package
 					if (optionnumber==1)
 					{
 						pausedoff()
+						Main.instance.audioselection = new SoundController(Main.instance.aceptarsounds);
+						Main.instance.audioselection.play(0);
 					}
 					else if(optionnumber==2)
 					{
@@ -59,6 +65,8 @@ package
 						pausedoff()						
 						Main.instance.destroyall()
 						Main.instance.evStartGame(currentlevel)
+						Main.instance.audioselection = new SoundController(Main.instance.aceptarsounds);
+						Main.instance.audioselection.play(0);
 					}
 					else
 					{
@@ -66,6 +74,8 @@ package
 						Main.instance.destroyall()
 						Locator.resetassets()
 						Main.instance.mainfunction();
+						Main.instance.audioselection = new SoundController(Main.instance.aceptarsounds);
+						Main.instance.audioselection.play(0);
 					}
 					
 					break;

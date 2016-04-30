@@ -1,5 +1,9 @@
 package
 {
+	import Characters.RedPanda;
+	
+	import Engine.Locator;
+	
 	import flash.display.MovieClip;
 	import flash.events.Event;
 	import flash.events.KeyboardEvent;
@@ -7,10 +11,6 @@ package
 	import flash.geom.Point;
 	import flash.media.Sound;
 	import flash.ui.Keyboard;
-	
-	import Characters.RedPanda;
-	
-	import Engine.Locator;
 	
 	[SWF(height="720", width="1280", frameRate="60")]
 	public class Main extends Locator
@@ -50,12 +50,15 @@ package
 		public var menu2:MovieClip;
 		public var creditos:MovieClip;
 		/////////////////////////////////////////Audio//////////////////////////////////////////////////
-		public var audio:SoundController
+		public var audio:SoundController;
+		public var audioselection:SoundController;
 		//////////////////////////////////////////Cannon///////////////////////////////////////////////
 		public var cannon1:Cannon;
 		public var cannon2:Cannon;
 		public var allCannons:Vector.<Cannon>;
-		
+		public var selectionsound:Sound;
+		public var backsound:Sound;
+		public var aceptarsounds:Sound;
 		
 		
 		
@@ -63,6 +66,7 @@ package
 		
 		public function Main()
 		{
+			
 			instance = this;
 			
 			mainfunction();
@@ -78,6 +82,9 @@ package
 		
 		public function evMainMenu(event:Event):void
 		{
+			selectionsound=Locator.assetsManager.getSound("soundchangeselection");
+			backsound=Locator.assetsManager.getSound("soundselectionatras");
+			aceptarsounds=Locator.assetsManager.getSound("soundselectionaceptar");
 			menu1=Locator.assetsManager.getMovieClip("MC_Menu1");
 			menu2=Locator.assetsManager.getMovieClip("MC_Menu2");
 			creditos=Locator.assetsManager.getMovieClip("MC_Creditos");
@@ -102,11 +109,17 @@ package
 					{
 						menu1.MC_jugar.alpha=1;
 						menu1.MC_creditos.alpha=0;
+						
+						audioselection = new SoundController(selectionsound);
+						audioselection.play(0);
 					}
-					else
+					else if (Locator.mainStage.contains(menu2))
 					{
 						menu2.MC_level2.alpha=0;
 						menu2.MC_level1.alpha=1;
+						
+						audioselection = new SoundController(selectionsound);
+						audioselection.play(0);
 					}
 					w=true;
 					s=false;
@@ -118,11 +131,17 @@ package
 					{
 						menu1.MC_jugar.alpha=0;
 						menu1.MC_creditos.alpha=1;
+						
+						audioselection = new SoundController(selectionsound);
+						audioselection.play(0);
 					}
-					else
+					else if (Locator.mainStage.contains(menu2))
 					{
 						menu2.MC_level1.alpha=0;
 						menu2.MC_level2.alpha=1;
+						
+						audioselection = new SoundController(selectionsound);
+						audioselection.play(0);
 					}
 					s=true;
 					w=false;
@@ -155,12 +174,17 @@ package
 						menu2.MC_level1.alpha=1;
 						menu2.MC_level2.alpha=0;
 						w=true;
+						audioselection = new SoundController(aceptarsounds);
+						audioselection.play(0);
+						
 						
 					}
 					else if (w==false&&Locator.mainStage.contains(menu1))
 					{
 						Locator.mainStage.removeChild(menu1);
 						Locator.mainStage.addChild(creditos);
+						audioselection = new SoundController(aceptarsounds);
+						audioselection.play(0);
 					}
 					else if (Locator.mainStage.contains(creditos))
 					{
@@ -169,18 +193,24 @@ package
 						menu1.MC_jugar.alpha=1;
 						menu1.MC_creditos.alpha=0;
 						w=true;
+						audioselection = new SoundController(aceptarsounds);
+						audioselection.play(0);
 					}
 					else if (w==false&&Locator.mainStage.contains(menu2))
 					{
 						Locator.mainStage.removeChild(menu2);
 						evStartGame("MCLevel2");
 						gamestarted=true;
+						audioselection = new SoundController(aceptarsounds);
+						audioselection.play(0);
 					}
 					else if (w==true&&Locator.mainStage.contains(menu2))
 					{
 						Locator.mainStage.removeChild(menu2);
 						evStartGame("MCLevel1");
 						gamestarted=true;
+						audioselection = new SoundController(aceptarsounds);
+						audioselection.play(0);
 					}
 					
 				}
